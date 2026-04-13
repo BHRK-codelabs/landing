@@ -15,6 +15,7 @@ import {
   Building2,
   Cable,
   ChartColumnBig,
+  Crosshair,
   FileText,
   GitBranch,
   MessageSquareText,

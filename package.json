@@ -1,6 +1,7 @@
 {
   "name": "untitled",
   "version": "0.1.0",
+  "packageManager": "pnpm@10.14.0",
   "private": true,
   "scripts": {
     "dev": "node --max-old-space-size=4096 ./node_modules/next/dist/bin/next dev --turbopack",
