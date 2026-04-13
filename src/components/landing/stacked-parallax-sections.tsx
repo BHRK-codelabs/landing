@@ -267,20 +267,21 @@ function ServicesView({
             reducedMotion
               ? undefined
               : {
-                  strokeDashoffset: [0, -160],
+                  strokeDashoffset: [0, -2200],
                 }
           }
           d={activeMeta.path}
           fill="none"
           stroke={activeMeta.color}
-          strokeDasharray="14 26"
+          strokeDasharray="220 2000"
           strokeLinecap="round"
-          strokeWidth="2.3"
+          strokeOpacity="0.86"
+          strokeWidth="2.8"
           transition={
             reducedMotion
               ? undefined
               : {
-                  duration: 1.55,
+                  duration: 3.4,
                   ease: "linear",
                   repeat: Number.POSITIVE_INFINITY,
                 }
@@ -895,17 +896,44 @@ function StudioView({
   direction: 1 | -1;
   progress: MotionValue<number>;
 }) {
-  const reducedMotion = useReducedMotion();
-  const waveY = useTransform(progress, [0, 1], [90, -80]);
   const openerOpacity = useTransform(progress, [0, 0.18, 0.3], [1, 1, 0]);
   const openerY = useTransform(progress, [0, 0.34], [0, -40]);
   const compOpacity = useTransform(progress, [0.18, 0.36], [0, 1]);
-  const waveShapes = [
-    "M40 260 C 260 170, 430 330, 640 240 C 850 150, 990 320, 1160 240",
-    "M40 300 C 250 210, 430 370, 640 280 C 850 200, 990 360, 1160 280",
-    "M40 340 C 260 250, 430 420, 640 330 C 860 250, 1000 410, 1160 330",
-    "M40 280 C 240 200, 430 350, 640 270 C 860 190, 990 340, 1160 270",
+  const studioLooks = [
+    {
+      accent: "#00D4FF",
+      detail:
+        "Leemos restricciones reales antes de decidir stack, alcance y secuencia de implementación.",
+      helper: "Decisión técnica con contexto operativo.",
+      overlay:
+        "radial-gradient(ellipse 62% 58% at 24% 52%, rgba(0,212,255,0.34) 0%, transparent 70%), radial-gradient(ellipse 58% 60% at 78% 34%, rgba(59,31,255,0.3) 0%, transparent 70%), radial-gradient(ellipse 52% 42% at 80% 76%, rgba(255,0,144,0.24) 0%, transparent 62%), radial-gradient(ellipse 36% 40% at 96% 20%, rgba(255,149,0,0.2) 0%, transparent 66%), #050508",
+    },
+    {
+      accent: "#00BCD4",
+      detail:
+        "Diseñamos estructura de interacción y arquitectura visual para que el sistema se entienda desde el primer uso.",
+      helper: "Forma al servicio de la función.",
+      overlay:
+        "radial-gradient(ellipse 64% 56% at 20% 42%, rgba(0,188,212,0.34) 0%, transparent 72%), radial-gradient(ellipse 52% 60% at 84% 22%, rgba(255,149,0,0.26) 0%, transparent 66%), radial-gradient(ellipse 48% 48% at 74% 70%, rgba(132,204,22,0.22) 0%, transparent 62%), #050508",
+    },
+    {
+      accent: "#84CC16",
+      detail:
+        "Construimos por módulos acoplables, con convenciones claras y control de cambios para sostener continuidad.",
+      helper: "Estabilidad, mantenibilidad y consistencia.",
+      overlay:
+        "radial-gradient(ellipse 68% 60% at 30% 30%, rgba(132,204,22,0.34) 0%, transparent 72%), radial-gradient(ellipse 56% 54% at 12% 68%, rgba(255,149,0,0.3) 0%, transparent 66%), radial-gradient(ellipse 52% 50% at 86% 58%, rgba(132,204,22,0.24) 0%, transparent 66%), #050508",
+    },
+    {
+      accent: "#FF0090",
+      detail:
+        "Refinamos con señales de uso y rendimiento para ajustar precisión sin perder velocidad de entrega.",
+      helper: "Iteración con evidencia, no con suposición.",
+      overlay:
+        "radial-gradient(ellipse 66% 58% at 72% 36%, rgba(255,0,144,0.34) 0%, transparent 70%), radial-gradient(ellipse 58% 52% at 18% 30%, rgba(255,149,0,0.3) 0%, transparent 66%), radial-gradient(ellipse 54% 56% at 26% 78%, rgba(176,144,42,0.24) 0%, transparent 64%), #050508",
+    },
   ] as const;
+  const activeLook = studioLooks[active % studioLooks.length];
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
@@ -927,34 +955,34 @@ function StudioView({
       </motion.div>
 
       <motion.div
-        className="relative min-h-0 flex-1 overflow-hidden rounded-[1.8rem] border border-white/12 bg-black/20"
+        className="relative min-h-0 flex-1 overflow-hidden bg-black"
         style={{ opacity: compOpacity }}
       >
-        <motion.svg
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 h-full w-full opacity-50"
-          focusable="false"
-          preserveAspectRatio="none"
-          style={reducedMotion ? undefined : { y: waveY }}
-          viewBox="0 0 1200 600"
-        >
-          <motion.path
-            animate={{ d: waveShapes[active % waveShapes.length] }}
-            d={waveShapes[0]}
-            fill="none"
-            stroke="rgba(0,212,255,0.36)"
-            strokeWidth="1.6"
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-          />
-          <motion.path
-            animate={{ d: waveShapes[(active + 2) % waveShapes.length] }}
-            d={waveShapes[2]}
-            fill="none"
-            stroke="rgba(217,225,32,0.3)"
-            strokeWidth="1.4"
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-          />
-        </motion.svg>
+        <AnimatePresence initial={false} mode="popLayout">
+          <motion.div
+            key={`${section.beats[active]?.title}-bg`}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0"
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+          >
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{ background: activeLook.overlay }}
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 opacity-[0.06]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px)",
+                backgroundSize: "34px 34px",
+              }}
+            />
+          </motion.div>
+        </AnimatePresence>
 
         <AnimatePresence initial={false} mode="popLayout">
           <motion.div
@@ -966,15 +994,21 @@ function StudioView({
             transition={{ duration: 0.27, ease: "easeOut" }}
           >
             <div className="max-w-4xl">
-              <p className="font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-accent-lime)]">
+              <p
+                className="font-mono text-xs uppercase tracking-[0.22em]"
+                style={{ color: activeLook.accent }}
+              >
                 Estudio en accion · {`0${active + 1}`} /{" "}
                 {`0${section.beats.length}`}
               </p>
-              <p className="mt-4 text-[clamp(2rem,3.8vw+0.5rem,4.2rem)] font-semibold leading-[0.92]">
+              <p className="mt-4 text-[clamp(2rem,3.8vw+0.5rem,4.2rem)] font-semibold leading-[0.92] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
                 {section.beats[active]?.title}
               </p>
-              <p className="mt-5 max-w-3xl text-base leading-8 text-[var(--color-text-secondary)] md:text-lg">
-                {section.beats[active]?.description}
+              <p className="mt-5 max-w-3xl text-base leading-8 text-white/90 md:text-lg">
+                {activeLook.detail}
+              </p>
+              <p className="mt-3 max-w-3xl text-sm font-medium text-white/80 md:text-base">
+                {activeLook.helper}
               </p>
               <div className="mt-7 flex flex-wrap gap-2.5">
                 {section.beats.map((beat, idx) => (
@@ -982,9 +1016,17 @@ function StudioView({
                     key={beat.title}
                     className={`rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition md:text-xs ${
                       idx === active
-                        ? "border-[var(--color-accent-lime)] bg-[var(--color-accent-lime)]/10 text-[var(--color-accent-lime)]"
+                        ? "bg-white/14 text-white"
                         : "border-white/20 text-white/55"
                     }`}
+                    style={
+                      idx === active
+                        ? {
+                            borderColor: activeLook.accent,
+                            boxShadow: `0 0 14px ${activeLook.accent}66`,
+                          }
+                        : undefined
+                    }
                   >
                     {beat.title}
                   </span>
@@ -1042,7 +1084,7 @@ function StudioPanel({
         style={{ opacity: fadeOut }}
       >
         <BgLayer index={index} />
-        <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-12 md:py-14">
+        <div className="relative z-10 mx-auto h-full w-full max-w-[95vw] px-4 py-12 md:px-6 md:py-14">
           <StudioView
             active={active}
             direction={direction}

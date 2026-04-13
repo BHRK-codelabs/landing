@@ -157,7 +157,11 @@ const stackedSections = [
       { title: "Responsable", description: "Néstor Villar Lautero." },
       {
         title: "Contacto comercial",
-        description: "+57 300 000 0000 · hola@bhrkcodelabs.com.",
+        description: "+57 302 401 2969 · hola@bhrkcodelabs.com.",
+      },
+      {
+        title: "Dirección",
+        description: " Calle 37A 9-47 Ibagué, Tolima. Colombia",
       },
       { title: "Operación", description: "Colombia y LATAM." },
       {
