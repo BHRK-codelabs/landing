@@ -1,38 +1,57 @@
-import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
+import type { Metadata } from "next";
+import { IBM_Plex_Mono, Inter } from "next/font/google";
+import type { ReactNode } from "react";
 import "./globals.css";
-import React from "react";
-import {ThemeProvider} from "next-themes";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+const inter = Inter({
+  variable: "--font-body",
+  subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-    title: "BHRK Codelabs - Engineering experiences that inspire.",
-    description: "It's not just a software consulting, where a lab that build and craft ideas with love and passion ",
+  metadataBase: new URL("https://bhrkcodelabs.io"),
+  title: {
+    default: "BHRK Codelabs | Consultoría y desarrollo de software",
+    template: "%s | BHRK Codelabs",
+  },
+  description:
+    "Consultoría tecnológica, desarrollo a medida, automatización e integraciones para empresas que necesitan operar con más claridad y control.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "BHRK Codelabs | Consultoría y desarrollo de software",
+    description:
+      "Consultoría tecnológica, desarrollo a medida, automatización e integraciones para empresas que necesitan operar con más claridad y control.",
+    url: "https://bhrkcodelabs.io",
+    siteName: "BHRK Codelabs",
+    locale: "es_CO",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BHRK Codelabs | Consultoría y desarrollo de software",
+    description:
+      "Consultoría tecnológica, desarrollo a medida, automatización e integraciones para empresas que necesitan operar con más claridad y control.",
+  },
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
-    children: React.ReactNode;
+  children,
+}: Readonly<{
+  children: ReactNode;
 }>) {
-    return (
-        <html lang="en">
-        <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased rubik-300`}
-        >
-        <ThemeProvider attribute="class" enableSystem={true} defaultTheme="dark">
-            {children}
-        </ThemeProvider>
-        </body>
-        </html>
-    );
+  return (
+    <html lang="es">
+      <body className={`${inter.variable} ${ibmPlexMono.variable} antialiased`}>
+        {children}
+      </body>
+    </html>
+  );
 }
