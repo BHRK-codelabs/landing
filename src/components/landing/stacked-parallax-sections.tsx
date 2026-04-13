@@ -886,6 +886,349 @@ function VisionPanel({
   );
 }
 
+function DesignIntentionVisual({ progress }: { progress: MotionValue<number> }) {
+  const reducedMotion = useReducedMotion();
+  const gridY = useTransform(progress, [0, 1], [-24, 44]);
+  const frameY = useTransform(progress, [0, 1], [18, -36]);
+  const nodeY = useTransform(progress, [0, 1], [8, -18]);
+
+  // Artboard geometry (SVG user units, viewBox 0 0 400 480)
+  const ax = 56;
+  const ay = 60;
+  const aw = 288;
+  const ah = 356;
+  // Golden ratio focal point (φ = 0.618)
+  const fx = ax + aw * 0.382; // ≈ 166
+  const fy = ay + ah * 0.618; // ≈ 280
+
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* Layer 1 — Dot grid */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: gridY }}
+        viewBox="0 0 400 480"
+      >
+        <defs>
+          <pattern
+            height="32"
+            id="did-dot"
+            patternUnits="userSpaceOnUse"
+            width="32"
+          >
+            <circle cx="16" cy="16" fill="rgba(255,255,255,0.2)" r="1" />
+          </pattern>
+        </defs>
+        <rect fill="url(#did-dot)" height="480" width="400" />
+      </motion.svg>
+
+      {/* Layer 2 — Proportion / alignment lines */}
+      <svg
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        viewBox="0 0 400 480"
+      >
+        {/* Horizontal golden ratio line */}
+        <line
+          stroke="rgba(0,188,212,0.28)"
+          strokeDasharray="8 12"
+          strokeWidth="0.75"
+          x1={ax}
+          x2={ax + aw}
+          y1={fy}
+          y2={fy}
+        />
+        {/* Vertical golden ratio line */}
+        <line
+          stroke="rgba(0,188,212,0.28)"
+          strokeDasharray="8 12"
+          strokeWidth="0.75"
+          x1={fx}
+          x2={fx}
+          y1={ay}
+          y2={ay + ah}
+        />
+        {/* Secondary — rule of thirds horizontal */}
+        <line
+          stroke="rgba(255,255,255,0.08)"
+          strokeDasharray="4 16"
+          strokeWidth="0.6"
+          x1={ax}
+          x2={ax + aw}
+          y1={ay + ah / 3}
+          y2={ay + ah / 3}
+        />
+      </svg>
+
+      {/* Layer 3 — Artboard frame + wireframe blocks */}
+      <motion.svg
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: frameY }}
+        viewBox="0 0 400 480"
+      >
+        {/* Artboard outer rect */}
+        <rect
+          fill="none"
+          height={ah}
+          stroke="rgba(0,188,212,0.45)"
+          strokeWidth="0.85"
+          width={aw}
+          x={ax}
+          y={ay}
+        />
+        {/* Corner L-marks */}
+        <path
+          d={`M${ax + 14},${ay} L${ax},${ay} L${ax},${ay + 14}`}
+          fill="none"
+          stroke="rgba(0,188,212,0.88)"
+          strokeWidth="1.5"
+        />
+        <path
+          d={`M${ax + aw - 14},${ay} L${ax + aw},${ay} L${ax + aw},${ay + 14}`}
+          fill="none"
+          stroke="rgba(0,188,212,0.88)"
+          strokeWidth="1.5"
+        />
+        <path
+          d={`M${ax + 14},${ay + ah} L${ax},${ay + ah} L${ax},${ay + ah - 14}`}
+          fill="none"
+          stroke="rgba(0,188,212,0.88)"
+          strokeWidth="1.5"
+        />
+        <path
+          d={`M${ax + aw - 14},${ay + ah} L${ax + aw},${ay + ah} L${ax + aw},${ay + ah - 14}`}
+          fill="none"
+          stroke="rgba(0,188,212,0.88)"
+          strokeWidth="1.5"
+        />
+        {/* Nav bar */}
+        <rect
+          fill="rgba(0,188,212,0.07)"
+          height="20"
+          rx="1"
+          stroke="rgba(0,188,212,0.3)"
+          strokeWidth="0.65"
+          width={aw - 16}
+          x={ax + 8}
+          y={ay + 8}
+        />
+        {/* Left sidebar */}
+        <rect
+          fill="rgba(255,255,255,0.03)"
+          height="176"
+          rx="1"
+          stroke="rgba(255,255,255,0.16)"
+          strokeWidth="0.6"
+          width="80"
+          x={ax + 8}
+          y={ay + 36}
+        />
+        {/* Hero text block */}
+        <rect
+          fill="rgba(0,188,212,0.06)"
+          height="60"
+          rx="1"
+          stroke="rgba(0,188,212,0.2)"
+          strokeWidth="0.6"
+          width="180"
+          x={ax + 96}
+          y={ay + 36}
+        />
+        {/* Sub-block A */}
+        <rect
+          fill="rgba(255,255,255,0.03)"
+          height="36"
+          rx="1"
+          stroke="rgba(255,255,255,0.13)"
+          strokeWidth="0.55"
+          width="180"
+          x={ax + 96}
+          y={ay + 104}
+        />
+        {/* Sub-block B */}
+        <rect
+          fill="rgba(255,255,255,0.03)"
+          height="36"
+          rx="1"
+          stroke="rgba(255,255,255,0.11)"
+          strokeWidth="0.55"
+          width="96"
+          x={ax + 96}
+          y={ay + 148}
+        />
+        {/* CTA pill */}
+        <rect
+          fill="rgba(0,188,212,0.16)"
+          height="18"
+          rx="9"
+          stroke="rgba(0,188,212,0.48)"
+          strokeWidth="0.75"
+          width="72"
+          x={ax + 8}
+          y={ay + 220}
+        />
+        {/* Footer band */}
+        <rect
+          fill="rgba(255,255,255,0.02)"
+          height="44"
+          rx="1"
+          stroke="rgba(255,255,255,0.09)"
+          strokeWidth="0.55"
+          width={aw - 16}
+          x={ax + 8}
+          y={ay + ah - 52}
+        />
+        {/* Dimension tick marks — right edge */}
+        <line
+          stroke="rgba(0,188,212,0.28)"
+          strokeWidth="0.6"
+          x1={ax + aw + 10}
+          x2={ax + aw + 10}
+          y1={ay}
+          y2={ay + ah}
+        />
+        <line
+          stroke="rgba(0,188,212,0.28)"
+          strokeWidth="0.6"
+          x1={ax + aw + 6}
+          x2={ax + aw + 14}
+          y1={ay}
+          y2={ay}
+        />
+        <line
+          stroke="rgba(0,188,212,0.28)"
+          strokeWidth="0.6"
+          x1={ax + aw + 6}
+          x2={ax + aw + 14}
+          y1={ay + ah}
+          y2={ay + ah}
+        />
+      </motion.svg>
+
+      {/* Layer 4 — Focal point node (golden ratio intersection) */}
+      <motion.svg
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: nodeY }}
+        viewBox="0 0 400 480"
+      >
+        <defs>
+          <radialGradient cx="50%" cy="50%" id="did-focal-glow" r="50%">
+            <stop offset="0%" stopColor="rgba(0,188,212,0.55)" />
+            <stop offset="100%" stopColor="rgba(0,188,212,0)" />
+          </radialGradient>
+        </defs>
+        {/* Glow halo */}
+        <motion.circle
+          animate={
+            reducedMotion
+              ? undefined
+              : { opacity: [0.35, 0.8, 0.35], r: [18, 26, 18] }
+          }
+          cx={fx}
+          cy={fy}
+          fill="url(#did-focal-glow)"
+          r={18}
+          transition={{
+            duration: 2.8,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+        />
+        {/* Crosshair arms */}
+        <line
+          stroke="rgba(0,188,212,0.55)"
+          strokeWidth="0.75"
+          x1={fx - 18}
+          x2={fx - 7}
+          y1={fy}
+          y2={fy}
+        />
+        <line
+          stroke="rgba(0,188,212,0.55)"
+          strokeWidth="0.75"
+          x1={fx + 7}
+          x2={fx + 18}
+          y1={fy}
+          y2={fy}
+        />
+        <line
+          stroke="rgba(0,188,212,0.55)"
+          strokeWidth="0.75"
+          x1={fx}
+          x2={fx}
+          y1={fy - 18}
+          y2={fy - 7}
+        />
+        <line
+          stroke="rgba(0,188,212,0.55)"
+          strokeWidth="0.75"
+          x1={fx}
+          x2={fx}
+          y1={fy + 7}
+          y2={fy + 18}
+        />
+        {/* Inner ring */}
+        <circle
+          cx={fx}
+          cy={fy}
+          fill="none"
+          r="6"
+          stroke="rgba(0,188,212,0.7)"
+          strokeWidth="0.75"
+        />
+        {/* Core dot */}
+        <circle cx={fx} cy={fy} fill="rgba(0,188,212,1)" r="2.5" />
+        {/* Outer pulse ring */}
+        <motion.circle
+          animate={
+            reducedMotion
+              ? undefined
+              : { opacity: [0.55, 0.12, 0.55], r: [12, 22, 12] }
+          }
+          cx={fx}
+          cy={fy}
+          fill="none"
+          r={12}
+          stroke="rgba(0,188,212,0.5)"
+          strokeWidth="0.7"
+          transition={{
+            duration: 2.8,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+        />
+        {/* φ label at focal point */}
+        <text
+          fill="rgba(0,188,212,0.42)"
+          fontFamily="monospace"
+          fontSize="7"
+          textAnchor="start"
+          x={fx + 10}
+          y={fy - 10}
+        >
+          φ
+        </text>
+      </motion.svg>
+
+      {/* Semantic annotation */}
+      <div className="absolute bottom-3 right-4 font-mono text-[8px] uppercase tracking-[0.22em] text-[rgba(0,188,212,0.38)]">
+        proporción · alineación · intención
+      </div>
+    </div>
+  );
+}
+
 function StudioView({
   section,
   active,
@@ -989,51 +1332,112 @@ function StudioView({
           <motion.div
             key={section.beats[active]?.title}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute inset-0 flex items-center px-6 md:px-10"
+            className="absolute inset-0"
             exit={{ opacity: 0, y: direction > 0 ? -90 : 90 }}
             initial={{ opacity: 0, y: direction > 0 ? 90 : -90 }}
             transition={{ duration: 0.27, ease: "easeOut" }}
           >
-            <div className="max-w-4xl">
-              <p
-                className="font-mono text-xs uppercase tracking-[0.22em]"
-                style={{ color: activeLook.accent }}
-              >
-                Estudio en accion · {`0${active + 1}`} /{" "}
-                {`0${section.beats.length}`}
-              </p>
-              <p className="mt-4 text-[clamp(2rem,3.8vw+0.5rem,4.2rem)] font-semibold leading-[0.92] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
-                {section.beats[active]?.title}
-              </p>
-              <p className="mt-5 max-w-3xl text-base leading-8 text-white/90 md:text-lg">
-                {activeLook.detail}
-              </p>
-              <p className="mt-3 max-w-3xl text-sm font-medium text-white/80 md:text-base">
-                {activeLook.helper}
-              </p>
-              <div className="mt-7 flex flex-wrap gap-2.5">
-                {section.beats.map((beat, idx) => (
-                  <span
-                    key={beat.title}
-                    className={`rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition md:text-xs ${
-                      idx === active
-                        ? "bg-white/14 text-white"
-                        : "border-white/20 text-white/55"
-                    }`}
-                    style={
-                      idx === active
-                        ? {
-                            borderColor: activeLook.accent,
-                            boxShadow: `0 0 14px ${activeLook.accent}66`,
+            {active === 1 ? (
+              /* ── Diseño con intención — layout izquierda/derecha ── */
+              <div className="grid h-full md:grid-cols-[1fr_1fr]">
+                <div className="flex items-center px-6 md:px-10">
+                  <div className="max-w-lg">
+                    <div className="mb-4 flex items-center gap-2.5">
+                      <Crosshair
+                        className="h-3.5 w-3.5 shrink-0"
+                        style={{ color: activeLook.accent }}
+                      />
+                      <p
+                        className="font-mono text-xs uppercase tracking-[0.22em]"
+                        style={{ color: activeLook.accent }}
+                      >
+                        Estudio en accion · {`0${active + 1}`} /{" "}
+                        {`0${section.beats.length}`}
+                      </p>
+                    </div>
+                    <p className="text-[clamp(1.9rem,3.4vw+0.4rem,3.8rem)] font-semibold leading-[0.94] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
+                      {section.beats[active]?.title}
+                    </p>
+                    <p className="mt-5 text-base leading-8 text-white/90 md:text-lg">
+                      {activeLook.detail}
+                    </p>
+                    <p className="mt-3 text-sm font-medium text-white/80 md:text-base">
+                      {activeLook.helper}
+                    </p>
+                    <div className="mt-7 flex flex-wrap gap-2.5">
+                      {section.beats.map((beat, idx) => (
+                        <span
+                          key={beat.title}
+                          className={`rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition md:text-xs ${
+                            idx === active
+                              ? "bg-white/14 text-white"
+                              : "border-white/20 text-white/55"
+                          }`}
+                          style={
+                            idx === active
+                              ? {
+                                  borderColor: activeLook.accent,
+                                  boxShadow: `0 0 14px ${activeLook.accent}66`,
+                                }
+                              : undefined
                           }
-                        : undefined
-                    }
-                  >
-                    {beat.title}
-                  </span>
-                ))}
+                        >
+                          {beat.title}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {/* Visual hero — blueprint abstracto */}
+                <div className="relative hidden overflow-hidden md:block">
+                  <DesignIntentionVisual progress={progress} />
+                </div>
               </div>
-            </div>
+            ) : (
+              /* ── Otros beats — layout full-bleed ── */
+              <div className="absolute inset-0 flex items-center px-6 md:px-10">
+                <div className="max-w-4xl">
+                  <p
+                    className="font-mono text-xs uppercase tracking-[0.22em]"
+                    style={{ color: activeLook.accent }}
+                  >
+                    Estudio en accion · {`0${active + 1}`} /{" "}
+                    {`0${section.beats.length}`}
+                  </p>
+                  <p className="mt-4 text-[clamp(2rem,3.8vw+0.5rem,4.2rem)] font-semibold leading-[0.92] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
+                    {section.beats[active]?.title}
+                  </p>
+                  <p className="mt-5 max-w-3xl text-base leading-8 text-white/90 md:text-lg">
+                    {activeLook.detail}
+                  </p>
+                  <p className="mt-3 max-w-3xl text-sm font-medium text-white/80 md:text-base">
+                    {activeLook.helper}
+                  </p>
+                  <div className="mt-7 flex flex-wrap gap-2.5">
+                    {section.beats.map((beat, idx) => (
+                      <span
+                        key={beat.title}
+                        className={`rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition md:text-xs ${
+                          idx === active
+                            ? "bg-white/14 text-white"
+                            : "border-white/20 text-white/55"
+                        }`}
+                        style={
+                          idx === active
+                            ? {
+                                borderColor: activeLook.accent,
+                                boxShadow: `0 0 14px ${activeLook.accent}66`,
+                              }
+                            : undefined
+                        }
+                      >
+                        {beat.title}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </motion.div>
