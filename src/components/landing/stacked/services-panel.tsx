@@ -43,7 +43,7 @@ function ServicesView({
       icon: Orbit,
       color: "#00D4FF",
       path: "M0 170 C 230 260, 430 110, 640 190 C 850 280, 980 150, 1200 230",
-      label: "Decisión y dirección",
+      label: "Decisiï¿½n y direcciï¿½n",
     },
     {
       icon: Blocks,
@@ -55,13 +55,13 @@ function ServicesView({
       icon: GitBranch,
       color: "#FF9500",
       path: "M0 410 C 230 330, 430 460, 640 390 C 850 330, 980 450, 1200 390",
-      label: "Conexión operativa",
+      label: "Conexiï¿½n operativa",
     },
     {
       icon: MessageSquareText,
       color: "#7C3AED",
       path: "M0 510 C 240 450, 430 560, 640 510 C 850 450, 980 570, 1200 500",
-      label: "Interacción y soporte",
+      label: "Interacciï¿½n y soporte",
     },
     {
       icon: UserRoundCog,
@@ -78,11 +78,11 @@ function ServicesView({
   ] as const;
 
   const narrative = [
-    "Diagnóstico y criterio antes de mover presupuesto.",
+    "Diagnï¿½stico y criterio antes de mover presupuesto.",
     "Arquitectura para crecer sin romper continuidad.",
-    "Flujos conectados para operar con menos fricción.",
-    "Conversaciones útiles para soporte y operación.",
-    "Capacidad técnica que entra y suma desde el día uno.",
+    "Flujos conectados para operar con menos fricciï¿½n.",
+    "Conversaciones ï¿½tiles para soporte y operaciï¿½n.",
+    "Capacidad tï¿½cnica que entra y suma desde el dï¿½a uno.",
     "Experiencias sobrias que se entienden y rinden.",
   ] as const;
 
@@ -303,7 +303,7 @@ function ServicesView({
           >
             <div className="w-full">
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
-                {`0${active + 1}`} / {`0${section.beats.length}`} ·{" "}
+                {`0${active + 1}`} / {`0${section.beats.length}`} ï¿½{" "}
                 {activeMeta.label}
               </p>
               <p className="mt-4 max-w-2xl font-mono text-[11px] uppercase tracking-[0.22em] text-white/60 md:text-xs">
@@ -388,7 +388,7 @@ function ServicesPanel({
       className="relative h-[calc(100svh*8.7)]"
     >
       <motion.article
-        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(162deg,rgba(17,17,19,0.99),rgba(24,24,27,0.92))] md:top-16 md:h-[calc(100svh-4rem)]"
+        className="sticky top-0 h-[100svh] overflow-hidden bg-[linear-gradient(162deg,rgba(17,17,19,0.99),rgba(24,24,27,0.92))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, scale: sectionScale, y: sectionY }}
       >
         <BgLayer index={index} />

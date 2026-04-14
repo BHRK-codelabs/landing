@@ -282,7 +282,7 @@ function VisionPanel({
       id={section.id}
     >
       <motion.article
-        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
+        className="sticky top-0 h-[100svh] overflow-hidden bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, scale: sectionScale, y: sectionY }}
       >
         <BgLayer index={index} />

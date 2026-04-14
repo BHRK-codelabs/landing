@@ -509,7 +509,7 @@ function ServicesPanel({
       className="relative h-[calc(100svh*8.7)]"
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(162deg,rgba(17,17,19,0.99),rgba(24,24,27,0.92))]"
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden  border-[var(--color-border)] bg-[linear-gradient(162deg,rgba(17,17,19,0.99),rgba(24,24,27,0.92))]"
         style={{ opacity: sectionOpacity, scale: sectionScale, y: sectionY }}
       >
         <BgLayer index={index} />
@@ -670,7 +670,7 @@ function MethodPanel({
       id={section.id}
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(23,23,31,0.94))]"
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden  border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(23,23,31,0.94))]"
         style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} morphIndex={active} />
@@ -780,7 +780,7 @@ function VisionView({
           y control del negocio. Cada frente avanza por hitos hasta llegar a beta.
         </p>
 
-        <div className="mt-5 border-y border-white/12 md:hidden">
+        <div className="mt-5 border-white/12 md:hidden">
           <AnimatePresence initial={false}>
             {section.beats.slice(0, revealedCount).map((beat, idx) => {
             const Icon = icons[idx];
@@ -840,7 +840,7 @@ function VisionView({
           </AnimatePresence>
         </div>
 
-        <div className="mt-6 hidden border-y border-white/12 md:block">
+        <div className="mt-6 hidden  border-white/12 md:block">
           <AnimatePresence initial={false}>
             {section.beats.slice(0, revealedCount).map((beat, idx) => (
               <motion.a
@@ -969,7 +969,7 @@ function VisionPanel({
       className="relative z-10 min-h-[100svh] md:h-[calc(100svh*3.6)]"
     >
       <motion.article
-        className="relative min-h-[100svh] overflow-visible border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))] md:sticky md:top-0 md:h-[100svh] md:overflow-hidden"
+        className="relative min-h-[100svh] overflow-visible  border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))] md:sticky md:top-0 md:h-[100svh] md:overflow-hidden"
         style={{ opacity: sectionOpacitySmooth, y: sectionYSmooth }}
       >
         <BgLayer index={index} />
@@ -2266,7 +2266,7 @@ function StudioPanel({
   return (
     <section ref={rootRef} className="relative h-[calc(100svh*12.4)]">
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))]"
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden  border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))]"
         style={{ opacity: sectionOpacitySmooth, y: sectionYSmooth }}
       >
         <BgLayer index={index} />
@@ -2516,8 +2516,8 @@ function GenericNarrativePanel({
       <motion.article
         className={
           isTrustPanel
-            ? "relative overflow-visible border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(18,18,21,0.98),rgba(33,33,39,0.92))]"
-            : "sticky top-16 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]"
+            ? "relative overflow-visible  border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(18,18,21,0.98),rgba(33,33,39,0.92))]"
+            : "sticky top-16 h-[100svh] overflow-hidden  border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]"
         }
         style={isTrustPanel ? undefined : { opacity: sectionOpacity, y: sectionY }}
       >
@@ -2675,7 +2675,7 @@ function PitchBridgePanel({
       style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(24,24,27,0.92))]"
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden  border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(24,24,27,0.92))]"
         style={{ opacity: sectionOpacitySmooth, y: sectionYSmooth }}
       >
         <BgLayer index={index} />

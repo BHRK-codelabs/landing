@@ -94,7 +94,7 @@ export function IntroParallaxPhrase() {
       style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.div
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-bg-base)]"
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden bg-[var(--color-bg-base)]"
         style={{ opacity: stageOpacity, y: stageY }}
       >
         <AnimatePresence initial={false} mode="popLayout">

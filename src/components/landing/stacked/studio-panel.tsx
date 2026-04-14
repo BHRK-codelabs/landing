@@ -446,7 +446,8 @@ function StudioPanel({
       }
       setDirection(stepped > prev ? 1 : -1);
       return stepped;
-    });
+    });
+
   });
 
   return (
@@ -456,7 +457,7 @@ function StudioPanel({
       id={section.id}
     >
       <motion.article
-        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
+        className="sticky top-0 h-[100svh] overflow-hidden bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, scale: sectionScale, y: sectionY }}
       >
         <BgLayer index={index} />

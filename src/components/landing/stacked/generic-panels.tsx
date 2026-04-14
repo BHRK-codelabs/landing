@@ -23,7 +23,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
       "Hola BHRK, quiero hablar de mi proyecto.",
       "",
       `Contacto: ${trimmedContact || "No indicado"}`,
-      `Necesidad: ${trimmedBrief || "Quiero orientación para el siguiente paso"}`,
+      `Necesidad: ${trimmedBrief || "Quiero orientaciï¿½n para el siguiente paso"}`,
     ].join("\n");
   }, [brief, contact]);
 
@@ -39,15 +39,15 @@ function TrustView({ section }: { section: NarrativeSection }) {
 
   const validateLead = () => {
     if (website.trim().length > 0) {
-      setFeedback("No se pudo validar el envío. Intenta nuevamente.");
+      setFeedback("No se pudo validar el envï¿½o. Intenta nuevamente.");
       return false;
     }
     if (!hasContact) {
-      setFeedback("Déjanos un correo o número válido para responderte.");
+      setFeedback("Dï¿½janos un correo o nï¿½mero vï¿½lido para responderte.");
       return false;
     }
     if (!isHuman) {
-      setFeedback('Para continuar, escribe "BHRK" en la confirmación.');
+      setFeedback('Para continuar, escribe "BHRK" en la confirmaciï¿½n.');
       return false;
     }
     setFeedback(null);
@@ -88,7 +88,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
               className="grid rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 md:grid-cols-[220px_1fr] md:gap-6"
             >
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
-                0{idx + 1} · {beat.title}
+                0{idx + 1} ï¿½ {beat.title}
               </p>
               <p className="mt-1 text-sm leading-7 text-[var(--color-text-secondary)] md:mt-0">
                 {beat.description}
@@ -102,7 +102,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
             Contacto directo
           </p>
           <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-            Cuéntanos qué necesitas y te respondemos por WhatsApp o correo, como te quede mejor.
+            Cuï¿½ntanos quï¿½ necesitas y te respondemos por WhatsApp o correo, como te quede mejor.
           </p>
           <a
             className="mt-4 inline-flex text-xl font-semibold text-[#ff4d4f] hover:text-[#ff7875]"
@@ -122,7 +122,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
             <textarea
               className="min-h-24 w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
               onChange={(event) => setBrief(event.target.value)}
-              placeholder="¿Qué quieres resolver?"
+              placeholder="ï¿½Quï¿½ quieres resolver?"
               value={brief}
             />
             <input
@@ -137,7 +137,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
             <input
               className="w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
               onChange={(event) => setHumanCheck(event.target.value)}
-              placeholder='Confirmación rápida: escribe "BHRK"'
+              placeholder='Confirmaciï¿½n rï¿½pida: escribe "BHRK"'
               value={humanCheck}
             />
           </div>
@@ -160,7 +160,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
           </div>
 
           <p className="mt-4 text-xs leading-6 text-[var(--color-text-muted)]">
-            Si prefieres, también puedes llamarnos directo sin llenar el formulario.
+            Si prefieres, tambiï¿½n puedes llamarnos directo sin llenar el formulario.
           </p>
           {feedback ? (
             <p className="mt-2 text-xs leading-6 text-[#ff8f8f]">{feedback}</p>
@@ -191,7 +191,7 @@ function LedgerView({ section }: { section: NarrativeSection }) {
             className="grid border-b border-white/10 py-4 md:grid-cols-[260px_1fr] md:gap-8"
           >
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
-              0{idx + 1} · {beat.title}
+              0{idx + 1} ï¿½ {beat.title}
             </p>
             <p className="mt-2 text-sm leading-7 text-[var(--color-text-secondary)] md:mt-0">
               {beat.description}
@@ -248,8 +248,8 @@ function GenericNarrativePanel({
       <motion.article
         className={
           isFinalTrustPanel
-            ? "relative min-h-[100svh] overflow-visible border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:sticky md:top-16 md:h-[calc(100svh-4rem)] md:overflow-hidden"
-            : "sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:top-16 md:h-[calc(100svh-4rem)]"
+            ? "relative min-h-[100svh] overflow-visible bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:sticky md:top-16 md:h-[calc(100svh-4rem)] md:overflow-hidden"
+            : "sticky top-0 h-[100svh] overflow-hidden  bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:top-16 md:h-[calc(100svh-4rem)]"
         }
         style={{ opacity: sectionOpacity, y: sectionY }}
       >

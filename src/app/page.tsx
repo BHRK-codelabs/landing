@@ -225,7 +225,7 @@ export default function HomePage() {
       <main className="snap-y snap-proximity overscroll-y-contain pb-20 md:snap-none md:pb-0">
         <section
           id="inicio"
-          className="section-shell relative overflow-hidden px-5 pb-24 pt-24 md:pb-32 md:pt-32"
+          className="section-shell relative flex min-h-[100svh] items-center overflow-hidden px-5 py-20"
           style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         >
           <BrandParallax />
@@ -267,7 +267,7 @@ export default function HomePage() {
 
         <section
           id="contacto"
-          className="section-shell relative overflow-hidden bg-[var(--color-bg-surface)] px-5 py-24"
+          className="section-shell relative flex min-h-[100svh] items-center overflow-hidden bg-[var(--color-bg-surface)] px-5 py-20"
           style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         >
           <BrandParallax />
