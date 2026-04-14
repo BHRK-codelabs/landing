@@ -37,6 +37,13 @@ const scenes = [
   },
 ] as const;
 
+function stepTowardIndex(previous: number, target: number) {
+  if (target === previous) {
+    return previous;
+  }
+  return previous + (target > previous ? 1 : -1);
+}
+
 export function IntroParallaxPhrase() {
   const rootRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
@@ -52,16 +59,29 @@ export function IntroParallaxPhrase() {
 
   const activeIdxProgress = useTransform(
     syncedScroll,
-    [0, 1],
+    [0.06, 0.94],
     [0, scenes.length],
   );
   const [activeIdx, setActiveIdx] = useState(0);
+  const lastSceneTransitionAt = useRef(0);
+  const SCENE_TRANSITION_MIN_MS = 780;
   useMotionValueEvent(activeIdxProgress, "change", (value) => {
     const next = Math.max(
       0,
       Math.min(scenes.length - 1, Math.floor(value + Number.EPSILON)),
     );
-    setActiveIdx(next);
+    const now = Date.now();
+    setActiveIdx((previous) => {
+      const stepped = stepTowardIndex(previous, next);
+      if (stepped === previous) {
+        return previous;
+      }
+      if (now - lastSceneTransitionAt.current < SCENE_TRANSITION_MIN_MS) {
+        return previous;
+      }
+      lastSceneTransitionAt.current = now;
+      return stepped;
+    });
   });
 
   const bgShift = useTransform(syncedScroll, [0, 1], [-14, 24]);
@@ -76,11 +96,11 @@ export function IntroParallaxPhrase() {
     <section
       ref={rootRef}
       aria-label="Transicion hacia servicios"
-      className="relative h-[calc(100svh*3.2)]"
+      className="relative h-[calc(100svh*4.4)]"
       style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.div
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-bg-base)]"
+        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-bg-base)] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: stageOpacity, y: stageY }}
       >
         <motion.div
@@ -134,7 +154,7 @@ export function IntroParallaxPhrase() {
                   scale: idx === activeIdx ? 1 : 0.98,
                 }}
                 className={`absolute inset-0 flex flex-col justify-center ${scene.align}`}
-                transition={{ duration: reducedMotion ? 0 : 0.5, ease: "easeOut" }}
+                transition={{ duration: reducedMotion ? 0 : 0.85, ease: "easeOut" }}
               >
                 <p className="mt-3 max-w-5xl text-display text-[clamp(1.65rem,3vw+0.8rem,3.9rem)] font-extrabold leading-[0.98] text-[var(--color-text-primary)]">
                   {scene.title}
@@ -152,7 +172,7 @@ export function IntroParallaxPhrase() {
                 key={`step-${scene.id}`}
                 animate={{ opacity: idx === activeIdx ? 1 : 0.32 }}
                 className="h-[2px] flex-1 rounded-full bg-[var(--color-accent-cyan)]"
-                transition={{ duration: reducedMotion ? 0 : 0.35 }}
+                transition={{ duration: reducedMotion ? 0 : 0.55 }}
               />
             ))}
           </div>

@@ -346,13 +346,34 @@ export default function HomePage() {
         ) : null}
       </main>
 
+
       <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg-base)] px-5 py-10">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 text-sm text-[var(--color-text-secondary)] md:flex-row md:items-center md:justify-between">
-          <p>
-            © {new Date().getFullYear()} BHRK Codelabs. Todos los derechos
-            reservados.
-          </p>
-          <div className="flex flex-wrap gap-4">
+        <div className="mx-auto grid w-full max-w-6xl gap-8 text-sm text-[var(--color-text-secondary)] md:grid-cols-[1.2fr_1fr] md:items-end">
+          <div>
+            <p>
+              © {new Date().getFullYear()} BHRK Codelabs. Todos los derechos
+              reservados.
+            </p>
+            <div className="mt-4 space-y-1.5 text-xs leading-6 text-[var(--color-text-muted)] md:text-sm">
+              <p>
+                <span className="text-[var(--color-text-secondary)]">Dirección:</span>{" "}
+                Calle 37A 9-47 Ibagué, Tolima. Colombia
+              </p>
+              <p>
+                <span className="text-[var(--color-text-secondary)]">Teléfono:</span>{" "}
+                +57 302 401 2969
+              </p>
+              <p>
+                <span className="text-[var(--color-text-secondary)]">Correo:</span>{" "}
+                hola@bhrkcodelabs.com
+              </p>
+              <p>
+                <span className="text-[var(--color-text-secondary)]">Cobertura:</span>{" "}
+                Colombia y LATAM
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-4 md:justify-end">
             <Link href="/servicios">Servicios</Link>
             <Link href="/productos">Productos</Link>
             <Link href="/metodologia">Metodología</Link>

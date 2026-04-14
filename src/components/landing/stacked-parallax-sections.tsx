@@ -7,6 +7,7 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
 } from "framer-motion";
 import {
@@ -43,6 +44,13 @@ type NarrativeSection = {
 type StackedParallaxSectionsProps = {
   sections: NarrativeSection[];
 };
+
+function stepTowardIndex(previous: number, target: number) {
+  if (target === previous) {
+    return previous;
+  }
+  return previous + (target > previous ? 1 : -1);
+}
 
 function BgLayer({
   index,
@@ -459,25 +467,30 @@ function ServicesPanel({
     target: rootRef,
     offset: ["start start", "end end"],
   });
+  const syncedScroll = useSpring(scrollYProgress, {
+    stiffness: 92,
+    damping: 24,
+    mass: 0.32,
+  });
   const mapped = useTransform(
-    scrollYProgress,
-    [0.06, 0.92],
+    syncedScroll,
+    [0.04, 0.96],
     [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const sectionOpacity = useTransform(
-    scrollYProgress,
+    syncedScroll,
     [0, 0.08, 0.82, 0.94, 1],
     [0.15, 1, 1, 0.65, 0],
   );
   const sectionY = useTransform(
-    scrollYProgress,
+    syncedScroll,
     [0, 0.08, 0.84, 1],
     [36, 0, 0, -76],
   );
   const sectionScale = useTransform(
-    scrollYProgress,
+    syncedScroll,
     [0, 0.08, 0.84, 1],
     [0.985, 1, 1, 0.955],
   );
@@ -488,11 +501,12 @@ function ServicesPanel({
       Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
     );
     setActive((prev) => {
-      if (prev === next) {
+      const stepped = stepTowardIndex(prev, next);
+      if (prev === stepped) {
         return prev;
       }
-      setDirection(next > prev ? 1 : -1);
-      return next;
+      setDirection(stepped > prev ? 1 : -1);
+      return stepped;
     });
   });
 
@@ -503,7 +517,7 @@ function ServicesPanel({
       className="relative h-[calc(100svh*8.7)]"
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(162deg,rgba(17,17,19,0.99),rgba(24,24,27,0.92))]"
+        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(162deg,rgba(17,17,19,0.99),rgba(24,24,27,0.92))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, scale: sectionScale, y: sectionY }}
       >
         <BgLayer index={index} />
@@ -539,7 +553,7 @@ function MethodView({
   const railY = useTransform(progress, [0, 1], [80, -96]);
 
   return (
-    <div className="grid h-full gap-8 md:grid-cols-[1fr_1fr]">
+    <div className="grid h-full min-h-0 gap-8 md:grid-cols-[1fr_1fr]">
       <div className="relative flex h-full flex-col justify-center">
         <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
           {section.eyebrow}
@@ -561,7 +575,7 @@ function MethodView({
         </p>
       </div>
 
-      <div className="relative flex h-full items-center overflow-hidden">
+      <div className="relative flex min-h-0 h-full items-center overflow-hidden">
         <motion.div
           className="pointer-events-none absolute left-2 top-0 h-full w-px bg-white/15 md:left-8"
           style={reducedMotion ? undefined : { y: railY }}
@@ -629,19 +643,24 @@ function MethodPanel({
     target: rootRef,
     offset: ["start start", "end end"],
   });
+  const syncedScroll = useSpring(scrollYProgress, {
+    stiffness: 92,
+    damping: 24,
+    mass: 0.32,
+  });
   const mapped = useTransform(
-    scrollYProgress,
-    [0.08, 0.92],
+    syncedScroll,
+    [0.04, 0.96],
     [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const sectionOpacity = useTransform(
-    scrollYProgress,
+    syncedScroll,
     [0, 0.08, 0.84, 1],
     [0.15, 1, 1, 0.06],
   );
-  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [34, 0, -56]);
+  const sectionY = useTransform(syncedScroll, [0, 0.08, 1], [34, 0, -56]);
 
   useMotionValueEvent(mapped, "change", (v) => {
     const next = Math.max(
@@ -649,11 +668,12 @@ function MethodPanel({
       Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
     );
     setActive((prev) => {
-      if (prev === next) {
+      const stepped = stepTowardIndex(prev, next);
+      if (prev === stepped) {
         return prev;
       }
-      setDirection(next > prev ? 1 : -1);
-      return next;
+      setDirection(stepped > prev ? 1 : -1);
+      return stepped;
     });
   });
 
@@ -664,7 +684,7 @@ function MethodPanel({
       id={section.id}
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(23,23,31,0.94))]"
+        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(23,23,31,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} morphIndex={active} />
@@ -702,9 +722,9 @@ function VisionView({
   const layerB = useTransform(progress, [0, 1], [-30, 70]);
   const orbitRadiusX = 220;
   const orbitRadiusY = 150;
-  const openerOpacity = useTransform(progress, [0, 0.18, 0.32], [1, 1, 0]);
-  const openerY = useTransform(progress, [0, 0.35], [0, -46]);
-  const compOpacity = useTransform(progress, [0.16, 0.34], [0, 1]);
+  const openerOpacity = useTransform(progress, [0, 0.24, 0.38], [1, 1, 0]);
+  const openerY = useTransform(progress, [0, 0.42], [0, -46]);
+  const compOpacity = useTransform(progress, [0.28, 0.44], [0, 1]);
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
@@ -906,36 +926,40 @@ function VisionPanel({
     target: rootRef,
     offset: ["start start", "end end"],
   });
+  const syncedScroll = useSpring(scrollYProgress, {
+    stiffness: 88,
+    damping: 24,
+    mass: 0.36,
+  });
   const mapped = useTransform(
-    scrollYProgress,
-    [0.08, 0.92],
+    syncedScroll,
+    [0.34, 0.96],
     [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const sectionOpacity = useTransform(
-    scrollYProgress,
+    syncedScroll,
     [0, 0.08, 0.86, 1],
     [0.15, 1, 1, 0.05],
   );
-  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -48]);
+  const sectionY = useTransform(syncedScroll, [0, 0.08, 1], [30, 0, -48]);
 
   useMotionValueEvent(mapped, "change", (v) => {
-    setActive(
-      Math.max(
-        0,
-        Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
-      ),
+    const next = Math.max(
+      0,
+      Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
     );
+    setActive((prev) => stepTowardIndex(prev, next));
   });
 
   return (
     <section
       ref={rootRef}
-      className="relative h-[calc(100svh*7.6)]"
+      className="relative h-[calc(100svh*8.6)]"
       id={section.id}
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))]"
+        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} />
@@ -2049,9 +2073,9 @@ function StudioView({
   // Opener exits quickly so beat 0 content has time to be fully visible
   // Beat 0 is active during progress ≈ 0.08–0.22; content must reach opacity 1
   // before that window closes.
-  const openerOpacity = useTransform(progress, [0, 0.05, 0.12], [1, 1, 0]);
-  const openerY = useTransform(progress, [0, 0.18], [0, -40]);
-  const compOpacity = useTransform(progress, [0.04, 0.15], [0, 1]);
+  const openerOpacity = useTransform(progress, [0, 0.24, 0.4], [1, 1, 0]);
+  const openerY = useTransform(progress, [0, 0.46], [0, -40]);
+  const compOpacity = useTransform(progress, [0.34, 0.52], [0, 1]);
   const brandScale = useTransform(progress, [0, 0.12], [1, 1.08]);
   const brandGlow = useTransform(progress, [0, 0.08, 0.14], [0.22, 0.5, 0.26]);
   const brandStripeX = useTransform(progress, [0, 0.12], [-40, 34]);
@@ -2133,7 +2157,7 @@ function StudioView({
             className="absolute inset-0"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
+            transition={{ duration: 1.05, ease: "easeOut" }}
           >
             <div
               aria-hidden
@@ -2159,7 +2183,7 @@ function StudioView({
             className="absolute inset-0"
             exit={{ opacity: 0, y: direction > 0 ? -90 : 90 }}
             initial={{ opacity: 0, y: direction > 0 ? 90 : -90 }}
-            transition={{ duration: 0.27, ease: "easeOut" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             {/* Layout split izquierda / derecha — todos los beats */}
             <div className="grid h-full md:grid-cols-[1fr_1fr]">
@@ -2235,42 +2259,55 @@ function StudioPanel({
     target: rootRef,
     offset: ["start start", "end end"],
   });
+  const syncedScroll = useSpring(scrollYProgress, {
+    stiffness: 88,
+    damping: 24,
+    mass: 0.34,
+  });
   const mapped = useTransform(
-    scrollYProgress,
-    [0.08, 0.92],
+    syncedScroll,
+    [0.38, 0.985],
     [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const lastStudioTransitionAt = useRef(0);
+  const STUDIO_TRANSITION_MIN_MS = 1300;
   const sectionOpacity = useTransform(
-    scrollYProgress,
+    syncedScroll,
     [0, 0.08, 0.84, 1],
     [0.15, 1, 1, 0.08],
   );
-  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -42]);
+  const sectionY = useTransform(syncedScroll, [0, 0.08, 1], [30, 0, -42]);
 
   useMotionValueEvent(mapped, "change", (v) => {
     const next = Math.max(
       0,
       Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
     );
+    const now = Date.now();
     setActive((prev) => {
-      if (prev === next) {
+      const stepped = stepTowardIndex(prev, next);
+      if (prev === stepped) {
         return prev;
       }
-      setDirection(next > prev ? 1 : -1);
-      return next;
+      if (now - lastStudioTransitionAt.current < STUDIO_TRANSITION_MIN_MS) {
+        return prev;
+      }
+      lastStudioTransitionAt.current = now;
+      setDirection(stepped > prev ? 1 : -1);
+      return stepped;
     });
   });
 
   return (
     <section
       ref={rootRef}
-      className="relative h-[calc(100svh*6.1)]"
+      className="relative h-[calc(100svh*8.8)]"
       id={section.id}
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))]"
+        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} />
@@ -2278,7 +2315,7 @@ function StudioPanel({
           <StudioView
             active={active}
             direction={direction}
-            progress={scrollYProgress}
+            progress={syncedScroll}
             section={section}
           />
         </div>
@@ -2494,16 +2531,26 @@ function GenericNarrativePanel({
   renderer: ReactNode;
 }) {
   const rootRef = useRef<HTMLElement | null>(null);
+  const isFinalTrustPanel = section.id === "info-verificada";
   const { scrollYProgress } = useScroll({
     target: rootRef,
     offset: ["start start", "end end"],
   });
+  const syncedScroll = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 24,
+    mass: 0.34,
+  });
   const sectionOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.08, 0.84, 1],
-    [0.15, 1, 1, 0.08],
+    syncedScroll,
+    isFinalTrustPanel ? [0, 0.08, 1] : [0, 0.08, 0.84, 1],
+    isFinalTrustPanel ? [0.15, 1, 1] : [0.15, 1, 1, 0.08],
   );
-  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [24, 0, -36]);
+  const sectionY = useTransform(
+    syncedScroll,
+    isFinalTrustPanel ? [0, 0.08, 1] : [0, 0.08, 1],
+    isFinalTrustPanel ? [24, 0, 0] : [24, 0, -36],
+  );
 
   return (
     <section
@@ -2513,11 +2560,11 @@ function GenericNarrativePanel({
       style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.article
-        className="sticky top-16 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]"
+        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:top-16 md:h-[calc(100svh-4rem)]"
         style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} />
-        <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-14 md:py-18">
+        <div className="relative z-10 mx-auto h-full w-full max-w-6xl overflow-y-auto px-5 py-14 md:overflow-visible md:py-18">
           {renderer}
         </div>
       </motion.article>
