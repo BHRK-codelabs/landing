@@ -1,19 +1,28 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
+  const disallowInternalPaths = [
+    "/api/",
+    "/admin/",
+    "/dashboard/",
+    "/private/",
+    "/cdn-cgi/",
+    "/_next/webpack-hmr",
+  ];
+
   return {
     rules: [
       {
-        // Googlebot: acceso completo con crawl delay ligero
+        // Googlebot: indexacion completa sin acceso a rutas internas
         userAgent: "Googlebot",
         allow: "/",
-        disallow: ["/api/", "/_next/", "/cdn-cgi/"],
+        disallow: disallowInternalPaths,
       },
       {
         // Bingbot
         userAgent: "Bingbot",
         allow: "/",
-        disallow: ["/api/", "/_next/", "/cdn-cgi/"],
+        disallow: disallowInternalPaths,
       },
       {
         // Bots de redes sociales para previews
@@ -44,8 +53,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         // Resto de crawlers: acceso general, sin rutas internas
         userAgent: "*",
-        allow: "/",
-        disallow: ["/api/", "/_next/", "/cdn-cgi/"],
+        allow: ["/", "/_next/static/", "/_next/image/"],
+        disallow: disallowInternalPaths,
       },
     ],
     sitemap: "https://bhrkcodelabs.io/sitemap.xml",
