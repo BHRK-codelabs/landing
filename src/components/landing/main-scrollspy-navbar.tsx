@@ -102,8 +102,8 @@ export function MainScrollSpyNavbar({ items }: MainScrollSpyNavbarProps) {
   }, [menuOpen]);
 
   return (
-    <div className="relative mx-auto w-full max-w-6xl px-6 py-4 md:px-12 md:py-6">
-      <div className="relative flex items-center justify-between py-2 md:hidden">
+    <div className="relative mx-auto w-full max-w-6xl  md:px-12 md:py-6">
+      <div className="relative flex items-center justify-between  bg-[linear-gradient(120deg,rgba(0,212,255,0.08),rgba(124,58,237,0.08),rgba(255,255,255,0.03))] px-6 py-4 backdrop-blur-md md:hidden">
         <a className="group flex flex-1 items-center" href="#inicio">
           <Image
             alt="BHRK Codelabs"
