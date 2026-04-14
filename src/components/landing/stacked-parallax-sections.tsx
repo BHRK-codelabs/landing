@@ -21,10 +21,13 @@ import {
   GitBranch,
   MessageSquareText,
   Orbit,
+  PhoneCall,
   RefreshCw,
   ScanLine,
+  SendHorizontal,
   ShoppingCart,
   UserRoundCog,
+  MessageCircle,
 } from "lucide-react";
 import Image from "next/image";
 import { type ReactNode, useMemo, useRef, useState } from "react";
@@ -2285,65 +2288,69 @@ function StudioPanel({
 }
 
 function TrustView({ section }: { section: NarrativeSection }) {
-  const [contact, setContact] = useState("");
-  const [brief, setBrief] = useState("");
-  const [humanCheck, setHumanCheck] = useState("");
+  const [mode, setMode] = useState<"whatsapp" | "contacto">("whatsapp");
+  const [contactPreference, setContactPreference] = useState<
+    "llamada" | "mensaje"
+  >("llamada");
+  const [inputValue, setInputValue] = useState("");
   const [website, setWebsite] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const isHuman = humanCheck.trim().toUpperCase() === "BHRK";
-  const hasContact = contact.replace(/\D/g, "").length >= 7;
-
   const contactPayload = useMemo(() => {
-    const trimmedContact = contact.trim();
-    const trimmedBrief = brief.trim();
+    const trimmedValue = inputValue.trim();
+
+    if (mode === "whatsapp") {
+      return [
+        "Hola BHRK, vengo desde su sitio web.",
+        "",
+        `Mensaje: ${trimmedValue || "Quiero hablar de mi proyecto."}`,
+      ].join("\n");
+    }
+
+    const preferenceText =
+      contactPreference === "llamada"
+        ? "Quiero que me llamen."
+        : "Quiero que me escriban.";
+
     return [
-      "Hola BHRK, quiero hablar de mi proyecto.",
+      "Hola BHRK, vengo desde su sitio web.",
       "",
-      `Número de contacto: ${trimmedContact || "No indicado"}`,
-      `Necesidad: ${trimmedBrief || "Quiero orientación para el siguiente paso"}`,
+      `Solicitud: ${preferenceText}`,
+      `Contacto: ${trimmedValue || "No indicado"}`,
     ].join("\n");
-  }, [brief, contact]);
+  }, [contactPreference, inputValue, mode]);
 
   const whatsappHref = useMemo(
     () => `https://wa.me/573024012969?text=${encodeURIComponent(contactPayload)}`,
     [contactPayload],
   );
-  const mailtoHref = useMemo(
-    () =>
-      `mailto:hola.bhrkcodelabs@gmail.com?subject=${encodeURIComponent("Solicitud de llamada desde sitio web")}&body=${encodeURIComponent(contactPayload)}`,
-    [contactPayload],
-  );
 
-  const validateLead = () => {
+  const validateAction = () => {
     if (website.trim().length > 0) {
       setFeedback("No se pudo validar el envío. Intenta nuevamente.");
       return false;
     }
-    if (!hasContact) {
-      setFeedback("Déjanos un número válido para poder llamarte.");
+
+    const trimmedValue = inputValue.trim();
+    if (mode === "whatsapp" && trimmedValue.length < 4) {
+      setFeedback("Escribe un mensaje breve para enviarte a WhatsApp.");
       return false;
     }
-    if (!isHuman) {
-      setFeedback('Para continuar, escribe "BHRK" en la confirmación.');
+
+    if (mode === "contacto" && trimmedValue.length < 6) {
+      setFeedback("Déjanos un número o contacto válido para responderte.");
       return false;
     }
+
     setFeedback(null);
     return true;
   };
 
-  const handleWhatsApp = () => {
-    if (!validateLead()) {
+  const handleSend = () => {
+    if (!validateAction()) {
       return;
     }
-    window.location.href = whatsappHref;
-  };
-
-  const handleCallRequest = () => {
-    if (!validateLead()) {
-      return;
-    }
-    window.location.href = mailtoHref;
+    window.open(whatsappHref, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -2380,29 +2387,94 @@ function TrustView({ section }: { section: NarrativeSection }) {
             Contacto directo
           </p>
           <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-            Déjanos tu número y tu necesidad. Te contactamos con una propuesta clara y sin rodeos.
+            En LATAM resolvemos rápido por WhatsApp. Elige cómo quieres avanzar.
           </p>
-          <a
-            className="mt-4 inline-flex text-xl font-semibold text-[#ff4d4f] hover:text-[#ff7875]"
-            href="tel:+573024012969"
-          >
-            +57 302 401 2969
-          </a>
+          <div className="mt-5 grid gap-2">
+            <button
+              className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                mode === "whatsapp"
+                  ? "bg-[#25D366] text-[#07220f]"
+                  : "border border-white/20 text-[var(--color-text-primary)] hover:border-white/35"
+              }`}
+              onClick={() => {
+                setMode("whatsapp");
+                setFeedback(null);
+                setInputValue("");
+              }}
+              type="button"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Escríbeme a WhatsApp
+            </button>
+            <button
+              className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                mode === "contacto"
+                  ? "bg-[var(--color-accent-cyan)] text-[var(--color-bg-base)]"
+                  : "border border-white/20 text-[var(--color-text-primary)] hover:border-white/35"
+              }`}
+              onClick={() => {
+                setMode("contacto");
+                setFeedback(null);
+                setInputValue("");
+              }}
+              type="button"
+            >
+              <PhoneCall className="h-4 w-4" />
+              ¿Quieres que te llamemos o te escribamos?
+            </button>
+          </div>
 
-          <div className="mt-6 grid gap-3">
-            <input
-              className="w-full rounded-xl border border-white/24 bg-white/[0.08] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
-              inputMode="tel"
-              onChange={(event) => setContact(event.target.value)}
-              placeholder="Tu número de contacto"
-              value={contact}
-            />
-            <textarea
-              className="min-h-24 w-full rounded-xl border border-white/24 bg-white/[0.08] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
-              onChange={(event) => setBrief(event.target.value)}
-              placeholder="Cuéntanos brevemente qué necesitas y te llamamos"
-              value={brief}
-            />
+          {mode === "contacto" ? (
+            <div className="mt-4 flex gap-2">
+              <button
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                  contactPreference === "llamada"
+                    ? "bg-white/16 text-white"
+                    : "border border-white/20 text-white/75 hover:border-white/35"
+                }`}
+                onClick={() => setContactPreference("llamada")}
+                type="button"
+              >
+                Llámenme
+              </button>
+              <button
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                  contactPreference === "mensaje"
+                    ? "bg-white/16 text-white"
+                    : "border border-white/20 text-white/75 hover:border-white/35"
+                }`}
+                onClick={() => setContactPreference("mensaje")}
+                type="button"
+              >
+                Escríbanme
+              </button>
+            </div>
+          ) : null}
+
+          <div className="mt-4">
+            <div className="flex overflow-hidden rounded-xl border border-white/24 bg-white/[0.08]">
+              <input
+                className="w-full bg-transparent px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)]"
+                inputMode={mode === "whatsapp" ? "text" : "text"}
+                onChange={(event) => setInputValue(event.target.value)}
+                placeholder={
+                  mode === "whatsapp"
+                    ? "Escribe tu mensaje y te llevamos a WhatsApp."
+                    : contactPreference === "llamada"
+                      ? "Déjanos tu número para llamarte."
+                      : "Déjanos tu WhatsApp o correo para escribirte."
+                }
+                value={inputValue}
+              />
+              <button
+                className="inline-flex items-center gap-1.5 border-l border-white/18 bg-[var(--color-accent-cyan)] px-3 text-xs font-bold uppercase tracking-[0.08em] text-[var(--color-bg-base)] transition hover:brightness-110"
+                onClick={handleSend}
+                type="button"
+              >
+                <SendHorizontal className="h-3.5 w-3.5" />
+                Enviar
+              </button>
+            </div>
             <input
               aria-hidden="true"
               autoComplete="off"
@@ -2412,33 +2484,14 @@ function TrustView({ section }: { section: NarrativeSection }) {
               type="text"
               value={website}
             />
-            <input
-              className="w-full rounded-xl border border-white/24 bg-white/[0.08] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
-              onChange={(event) => setHumanCheck(event.target.value)}
-              placeholder='Confirmación rápida: escribe "BHRK"'
-              value={humanCheck}
-            />
-          </div>
-
-          <div className="mt-5 flex flex-wrap gap-3">
-            <button
-              className="inline-flex rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-[#07220f] transition hover:brightness-110"
-              onClick={handleWhatsApp}
-              type="button"
-            >
-              Escríbenos a WhatsApp
-            </button>
-            <button
-              className="inline-flex rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-accent-cyan)] hover:text-[var(--color-accent-cyan)]"
-              onClick={handleCallRequest}
-              type="button"
-            >
-              Queremos llamarte
-            </button>
           </div>
 
           <p className="mt-4 text-xs leading-6 text-[var(--color-text-muted)]">
-            También puedes llamarnos directo y te atendemos en el momento.
+            También puedes llamar directo al{" "}
+            <a className="underline decoration-white/30 hover:text-white" href="tel:+573024012969">
+              +57 302 401 2969
+            </a>
+            .
           </p>
           {feedback ? (
             <p className="mt-2 text-xs leading-6 text-[#ff8f8f]">{feedback}</p>
