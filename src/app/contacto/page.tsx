@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contacto",
   description:
-    "Canales de contacto de BHRK Codelabs para proyectos de consultoria tecnologica, desarrollo de software y automatizacion.",
+    "Canales de contacto de BHRK Codelabs para proyectos de consultoría tecnológica, desarrollo de software y automatización.",
   alternates: { canonical: "/contacto" },
 };
 
@@ -13,15 +13,15 @@ export default function ContactoPage() {
       <h1 className="text-display text-4xl font-bold">Contacto</h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">BHRK Codelabs</p>
       <p className="mt-2 text-[var(--color-text-secondary)]">
-        Telefono: +57 302 401 2969
+        Teléfono: +57 302 401 2969
       </p>
       <p className="mt-2 text-[var(--color-text-secondary)]">
-        Direccion: Calle 37A 9-47 Ibague, Tolima. Colombia
+        Dirección: Calle 37A 9-47 Ibagué, Tolima. Colombia
       </p>
       <p className="mt-2 text-[var(--color-text-secondary)]">
         Correo: hola@bhrkcodelabs.com
       </p>
-      <p className="mt-2 text-[var(--color-text-secondary)]">Ubicacion: Colombia</p>
+      <p className="mt-2 text-[var(--color-text-secondary)]">Ubicación: Colombia</p>
     </main>
   );
 }

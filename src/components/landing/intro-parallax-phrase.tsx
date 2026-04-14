@@ -13,15 +13,15 @@ import { useRef, useState } from "react";
 const scenes = [
   {
     id: "scene-01",
-    title: "Tu negocio no necesita mas ruido.",
-    accent: "Necesita direccion y ejecucion.",
+    title: "Tu negocio no necesita más ruido.",
+    accent: "Necesita dirección y ejecución.",
     align: "items-start text-left",
     gradient:
       "radial-gradient(ellipse at 30% 46%, rgba(56,240,255,0.55), transparent 54%), radial-gradient(ellipse at 64% 30%, rgba(27,39,255,0.5), transparent 52%), radial-gradient(ellipse at 74% 74%, rgba(255,0,144,0.4), transparent 50%), radial-gradient(ellipse at 98% 52%, rgba(255,149,0,0.34), transparent 44%), linear-gradient(180deg, rgba(8,10,18,0.86), rgba(8,10,18,0.94))",
   },
   {
     id: "scene-02",
-    title: "Convertimos necesidad operativa en solucion real.",
+    title: "Convertimos necesidad operativa en solución real.",
     accent: "Sin humo. Sin vueltas.",
     align: "items-center text-center",
     gradient:
@@ -29,7 +29,7 @@ const scenes = [
   },
   {
     id: "scene-03",
-    title: "Ahora si: estas son nuestras capacidades activas.",
+    title: "Ahora sí: estas son nuestras capacidades activas.",
     accent: "Servicios listos para mover resultados.",
     align: "items-end text-right",
     gradient:
@@ -95,7 +95,7 @@ export function IntroParallaxPhrase() {
   return (
     <section
       ref={rootRef}
-      aria-label="Transicion hacia servicios"
+      aria-label="Transición hacia servicios"
       className="relative h-[calc(100svh*4.4)]"
       style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >

@@ -172,7 +172,7 @@ function ServicesView({
       icon: Orbit,
       color: "#00D4FF",
       path: "M0 170 C 230 260, 430 110, 640 190 C 850 280, 980 150, 1200 230",
-      label: "Decision y direccion",
+      label: "Decisión y dirección",
     },
     {
       icon: Blocks,
@@ -184,13 +184,13 @@ function ServicesView({
       icon: GitBranch,
       color: "#FF9500",
       path: "M0 410 C 230 330, 430 460, 640 390 C 850 330, 980 450, 1200 390",
-      label: "Conexion operativa",
+      label: "Conexión operativa",
     },
     {
       icon: MessageSquareText,
       color: "#7C3AED",
       path: "M0 510 C 240 450, 430 560, 640 510 C 850 450, 980 570, 1200 500",
-      label: "Interaccion y soporte",
+      label: "Interacción y soporte",
     },
     {
       icon: UserRoundCog,
@@ -207,11 +207,11 @@ function ServicesView({
   ] as const;
 
   const narrative = [
-    "Diagnostico y criterio antes de mover presupuesto.",
+    "Diagnóstico y criterio antes de mover presupuesto.",
     "Arquitectura para crecer sin romper continuidad.",
-    "Flujos conectados para operar con menos friccion.",
-    "Conversaciones utiles para soporte y operacion.",
-    "Capacidad tecnica que entra y suma desde el dia uno.",
+    "Flujos conectados para operar con menos fricción.",
+    "Conversaciones útiles para soporte y operación.",
+    "Capacidad técnica que entra y suma desde el día uno.",
     "Experiencias sobrias que se entienden y rinden.",
   ] as const;
 
@@ -722,12 +722,12 @@ function VisionView({
   const layerB = useTransform(progress, [0, 1], [-30, 70]);
   const orbitRadiusX = 220;
   const orbitRadiusY = 150;
-  const openerOpacity = useTransform(progress, [0, 0.24, 0.38], [1, 1, 0]);
-  const openerY = useTransform(progress, [0, 0.42], [0, -46]);
-  const compOpacity = useTransform(progress, [0.28, 0.44], [0, 1]);
+  const openerOpacity = useTransform(progress, [0, 0.68, 0.9], [1, 1, 0]);
+  const openerY = useTransform(progress, [0, 0.9], [0, -46]);
+  const compOpacity = useTransform(progress, [0.86, 0.98], [0, 1]);
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col">
+    <div className="relative flex h-full min-h-0 flex-col pt-24 md:pt-0">
       <motion.div
         className="pointer-events-none absolute inset-0 z-20 flex items-center"
         style={{ opacity: openerOpacity, y: openerY }}
@@ -769,7 +769,7 @@ function VisionView({
                     style={{ color: isActive ? meta[idx].color : "#c0c0c7" }}
                   />
                   <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/70">
-                    Modulo 0{idx + 1}
+                    Módulo 0{idx + 1}
                   </p>
                 </div>
                 <p
@@ -894,13 +894,13 @@ function VisionView({
           animate={{ opacity: 1, y: 0 }}
           className="pb-2 md:pb-6"
           initial={{ opacity: 0, y: 16 }}
-          transition={{ duration: 0.24 }}
+          transition={{ duration: 1.25, ease: "easeOut" }}
         >
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-cyan)]">
             Muy pronto
           </p>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-lime)]">
-            Incubando modulo {`0${active + 1}`}
+            Incubando módulo {`0${active + 1}`}
           </p>
           <p className="mt-2 text-lg font-semibold md:text-xl">
             {section.beats[active]?.title}
@@ -927,36 +927,55 @@ function VisionPanel({
     offset: ["start start", "end end"],
   });
   const syncedScroll = useSpring(scrollYProgress, {
-    stiffness: 88,
-    damping: 24,
-    mass: 0.36,
+    stiffness: 70,
+    damping: 30,
+    mass: 0.55,
   });
-  const mapped = useTransform(
-    syncedScroll,
-    [0.34, 0.96],
-    [0, section.beats.length],
-  );
   const [active, setActive] = useState(0);
+  const prevProgressRef = useRef(0);
+  const lastStepAtRef = useRef(0);
+  const VISION_STEP_DELTA = 0.08;
+  const VISION_STEP_COOLDOWN_MS = 3200;
+  const VISION_OPENER_GATE = 0.94;
   const sectionOpacity = useTransform(
     syncedScroll,
-    [0, 0.08, 0.86, 1],
+    [0, 0.3, 0.94, 1],
     [0.15, 1, 1, 0.05],
   );
-  const sectionY = useTransform(syncedScroll, [0, 0.08, 1], [30, 0, -48]);
+  const sectionY = useTransform(syncedScroll, [0, 0.3, 1], [38, 0, -48]);
 
-  useMotionValueEvent(mapped, "change", (v) => {
-    const next = Math.max(
-      0,
-      Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
+  useMotionValueEvent(syncedScroll, "change", (value) => {
+    const previousProgress = prevProgressRef.current;
+    const delta = value - previousProgress;
+    prevProgressRef.current = value;
+    if (Math.abs(delta) < VISION_STEP_DELTA) {
+      return;
+    }
+    const now = Date.now();
+    if (now - lastStepAtRef.current < VISION_STEP_COOLDOWN_MS) {
+      return;
+    }
+    if (value < VISION_OPENER_GATE) {
+      return;
+    }
+    lastStepAtRef.current = now;
+    setActive((previous) =>
+      Math.max(
+        0,
+        Math.min(
+          section.beats.length - 1,
+          previous + (delta > 0 ? 1 : -1),
+        ),
+      ),
     );
-    setActive((prev) => stepTowardIndex(prev, next));
   });
 
   return (
     <section
       ref={rootRef}
-      className="relative h-[calc(100svh*8.6)]"
+      className="relative h-[calc(100svh*24)]"
       id={section.id}
+      style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.article
         className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
@@ -966,7 +985,7 @@ function VisionPanel({
         <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-12 md:py-14">
           <VisionView
             active={active}
-            progress={scrollYProgress}
+            progress={syncedScroll}
             section={section}
           />
         </div>
@@ -2070,15 +2089,24 @@ function StudioView({
   progress: MotionValue<number>;
 }) {
   const reducedMotion = useReducedMotion();
-  // Opener exits quickly so beat 0 content has time to be fully visible
-  // Beat 0 is active during progress ≈ 0.08–0.22; content must reach opacity 1
-  // before that window closes.
-  const openerOpacity = useTransform(progress, [0, 0.24, 0.4], [1, 1, 0]);
-  const openerY = useTransform(progress, [0, 0.46], [0, -40]);
-  const compOpacity = useTransform(progress, [0.34, 0.52], [0, 1]);
-  const brandScale = useTransform(progress, [0, 0.12], [1, 1.08]);
-  const brandGlow = useTransform(progress, [0, 0.08, 0.14], [0.22, 0.5, 0.26]);
-  const brandStripeX = useTransform(progress, [0, 0.12], [-40, 34]);
+  // Opener: visible 0→0.14, fades 0.14→0.22
+  // Beat 0 active ≈ 0.08→0.22; compOpacity reaches ~80% before that window closes
+  const openerOpacity = useTransform(progress, [0, 0.7, 0.92], [1, 1, 0]);
+  const openerY = useTransform(progress, [0, 0.92], [0, -32]);
+  const compOpacity = useTransform(progress, [0.9, 0.99], [0, 1]);
+  const brandScale = useTransform(progress, [0, 0.68], [1, 1.04]);
+  const brandGlow = useTransform(progress, [0, 0.3, 0.68], [0.2, 0.42, 0.18]);
+  const brandStripeX = useTransform(progress, [0, 0.68], [-18, 24]);
+  // Theatrical opener — each layer gets its own parallax speed
+  const openerEyebrowY = useTransform(progress, [0, 0.92], [0, -8]);
+  const openerBrandY = useTransform(progress, [0, 0.92], [0, -16]);
+  const openerTitleY = useTransform(progress, [0, 0.92], [0, -26]);
+  const openerLeadY = useTransform(progress, [0, 0.92], [0, -12]);
+  const openerPillarsY = useTransform(progress, [0, 0.92], [10, -32]);
+  const openerPillarsOp = useTransform(progress, [0, 0.04], [0, 1]);
+  const openerBgWmarkY = useTransform(progress, [0, 0.92], [0, 22]);
+  const openerSvgY = useTransform(progress, [0, 0.92], [0, -14]);
+  const openerScrollCueOp = useTransform(progress, [0, 0.4, 0.72], [0.4, 0.4, 0]);
   const studioLooks = [
     {
       accent: "#00D4FF",
@@ -2119,30 +2147,172 @@ function StudioView({
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
+      {/* ── Opener teatral ── */}
       <motion.div
-        className="pointer-events-none absolute inset-0 z-20 flex items-center"
-        style={{ opacity: openerOpacity, y: openerY }}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-20 overflow-hidden"
+        style={{ opacity: openerOpacity }}
       >
-        <div className="w-full">
-          <motion.div
-            className="relative max-w-4xl"
-            style={reducedMotion ? undefined : { scale: brandScale }}
+        {/* Watermark BHRK en fondo */}
+        <motion.div
+          className="absolute inset-0 flex select-none items-center justify-center"
+          style={reducedMotion ? undefined : { y: openerBgWmarkY }}
+        >
+          <span
+            className="font-mono text-[22vw] font-black leading-none tracking-[-0.04em] text-white"
+            style={{ opacity: 0.035 }}
           >
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute -left-5 top-0 h-16 w-16 rounded-full bg-[var(--color-accent-cyan)]/20 blur-2xl"
-              style={reducedMotion ? undefined : { opacity: brandGlow, x: brandStripeX }}
+            BHRK
+          </span>
+        </motion.div>
+
+        {/* SVG convergencia (desktop) */}
+        <motion.div
+          className="pointer-events-none absolute right-0 top-0 hidden h-full w-[44%] md:block"
+          style={reducedMotion ? undefined : { y: openerSvgY }}
+        >
+          <svg
+            className="h-full w-full"
+            viewBox="0 0 320 460"
+            fill="none"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <filter id="glow-c" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              <filter id="glow-hub" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+            </defs>
+
+            {/* Líneas de conexión */}
+            <line x1="66" y1="96" x2="160" y2="230" stroke="#00D4FF" strokeWidth="1" strokeOpacity="0.28" strokeDasharray="4 4" />
+            <line x1="254" y1="96" x2="160" y2="230" stroke="#84CC16" strokeWidth="1" strokeOpacity="0.28" strokeDasharray="4 4" />
+            <line x1="160" y1="360" x2="160" y2="230" stroke="#FF9500" strokeWidth="1" strokeOpacity="0.28" strokeDasharray="4 4" />
+
+            {/* Partícula viajante — consultoría */}
+            <motion.circle
+              r={2.5}
+              fill="#00D4FF"
+              filter="url(#glow-c)"
+              animate={reducedMotion ? {} : { offsetDistance: ["0%", "100%"] }}
+              style={{ offsetPath: "path('M66,96 L160,230')", offsetRotate: "0deg" } as React.CSSProperties}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "linear", delay: 0 }}
             />
-            <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
-              {section.eyebrow} · BHRK Codelabs
-            </p>
-            <h2 className="hero-glow mt-5 text-display text-[clamp(2.1rem,3.2vw+0.8rem,3.9rem)] font-bold leading-[1.06]">
+            {/* Partícula viajante — ingeniería */}
+            <motion.circle
+              r={2.5}
+              fill="#84CC16"
+              filter="url(#glow-c)"
+              animate={reducedMotion ? {} : { offsetDistance: ["0%", "100%"] }}
+              style={{ offsetPath: "path('M254,96 L160,230')", offsetRotate: "0deg" } as React.CSSProperties}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "linear", delay: 0.7 }}
+            />
+            {/* Partícula viajante — diseño */}
+            <motion.circle
+              r={2.5}
+              fill="#FF9500"
+              filter="url(#glow-c)"
+              animate={reducedMotion ? {} : { offsetDistance: ["0%", "100%"] }}
+              style={{ offsetPath: "path('M160,360 L160,230')", offsetRotate: "0deg" } as React.CSSProperties}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "linear", delay: 1.4 }}
+            />
+
+            {/* Nodo: Consultoría */}
+            <circle cx="66" cy="96" r="20" fill="#00D4FF" fillOpacity="0.10" stroke="#00D4FF" strokeWidth="1" strokeOpacity="0.55" />
+            <motion.circle cx={66} cy={96} r={28} fill="none" stroke="#00D4FF" strokeWidth="0.6" strokeOpacity="0.3"
+              animate={reducedMotion ? {} : { r: [28, 36, 28], strokeOpacity: [0.3, 0, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+            <circle cx="66" cy="96" r="4" fill="#00D4FF" filter="url(#glow-c)" />
+            <text x="66" y="132" textAnchor="middle" fill="#00D4FF" fontSize="8" fontFamily="monospace" opacity="0.7">CONSULTORÍA</text>
+
+            {/* Nodo: Ingeniería */}
+            <circle cx="254" cy="96" r="20" fill="#84CC16" fillOpacity="0.10" stroke="#84CC16" strokeWidth="1" strokeOpacity="0.55" />
+            <motion.circle cx={254} cy={96} r={28} fill="none" stroke="#84CC16" strokeWidth="0.6" strokeOpacity="0.3"
+              animate={reducedMotion ? {} : { r: [28, 36, 28], strokeOpacity: [0.3, 0, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }} />
+            <circle cx="254" cy="96" r="4" fill="#84CC16" filter="url(#glow-c)" />
+            <text x="254" y="132" textAnchor="middle" fill="#84CC16" fontSize="8" fontFamily="monospace" opacity="0.7">INGENIERÍA</text>
+
+            {/* Nodo: Diseño */}
+            <circle cx="160" cy="360" r="20" fill="#FF9500" fillOpacity="0.10" stroke="#FF9500" strokeWidth="1" strokeOpacity="0.55" />
+            <motion.circle cx={160} cy={360} r={28} fill="none" stroke="#FF9500" strokeWidth="0.6" strokeOpacity="0.3"
+              animate={reducedMotion ? {} : { r: [28, 36, 28], strokeOpacity: [0.3, 0, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 2 }} />
+            <circle cx="160" cy="360" r="4" fill="#FF9500" filter="url(#glow-c)" />
+            <text x="160" y="396" textAnchor="middle" fill="#FF9500" fontSize="8" fontFamily="monospace" opacity="0.7">DISEÑO</text>
+
+            {/* Hub central: BHRK */}
+            <motion.circle cx={160} cy={230} r={38} fill="none" stroke="#00D4FF" strokeWidth="0.8" strokeOpacity="0.18"
+              animate={reducedMotion ? {} : { r: [38, 52, 38], strokeOpacity: [0.18, 0, 0.18] }}
+              transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }} />
+            <circle cx="160" cy="230" r="28" fill="rgba(0,212,255,0.08)" stroke="#00D4FF" strokeWidth="1.2" strokeOpacity="0.5" filter="url(#glow-hub)" />
+            <circle cx="160" cy="230" r="7" fill="#00D4FF" fillOpacity="0.9" filter="url(#glow-hub)" />
+            <text x="160" y="226" textAnchor="middle" fill="white" fontSize="7.5" fontFamily="monospace" fontWeight="bold" opacity="0.9">BHRK</text>
+            <text x="160" y="237" textAnchor="middle" fill="#00D4FF" fontSize="5.5" fontFamily="monospace" opacity="0.65">CODELABS</text>
+          </svg>
+        </motion.div>
+
+        {/* Contenido izquierda */}
+        <div className="absolute inset-0 flex items-center" aria-hidden={false}>
+          <div className="w-full max-w-[54%] pl-6 md:pl-10">
+            <motion.p
+              className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]"
+              style={reducedMotion ? undefined : { y: openerEyebrowY }}
+            >
+              {section.eyebrow}
+            </motion.p>
+            <motion.p
+              className="mt-3 font-mono text-[clamp(1.6rem,2.4vw+0.6rem,2.8rem)] font-black tracking-[-0.02em] text-white"
+              style={reducedMotion ? undefined : { y: openerBrandY }}
+            >
+              BHRK{" "}
+              <span className="hero-glow">·</span>{" "}
+              <span className="text-[var(--color-accent-cyan)]">Codelabs</span>
+            </motion.p>
+            <motion.h2
+              className="mt-4 text-display text-[clamp(1.4rem,2vw+0.5rem,2.4rem)] font-bold leading-[1.1] text-white/90"
+              style={reducedMotion ? undefined : { y: openerTitleY }}
+            >
               {section.title}
-            </h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
+            </motion.h2>
+            <motion.p
+              className="mt-4 max-w-sm text-sm leading-7 text-[var(--color-text-secondary)]"
+              style={reducedMotion ? undefined : { y: openerLeadY }}
+            >
               {section.lead}
-            </p>
-          </motion.div>
+            </motion.p>
+
+            {/* Tres pilares */}
+            <motion.div
+              className="mt-6 space-y-2"
+              style={reducedMotion ? undefined : { y: openerPillarsY, opacity: openerPillarsOp }}
+            >
+              {(
+                [
+                  ["#00D4FF", "Consultoría"],
+                  ["#84CC16", "Ingeniería"],
+                  ["#FF9500", "Diseño"],
+                ] as const
+              ).map(([color, label]) => (
+                <div key={label} className="flex items-center gap-2.5">
+                  <span className="inline-block h-1.5 w-5 rounded-full" style={{ background: color }} />
+                  <span className="font-mono text-xs text-white/60">{label}</span>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Scroll cue */}
+            <motion.p
+              className="mt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-white/30"
+              style={reducedMotion ? undefined : { opacity: openerScrollCueOp }}
+            >
+              Desplaza para explorar
+            </motion.p>
+          </div>
         </div>
       </motion.div>
 
@@ -2150,6 +2320,15 @@ function StudioView({
         className="relative min-h-0 flex-1 overflow-hidden bg-black"
         style={{ opacity: compOpacity }}
       >
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-6 pt-6 md:px-10 md:pt-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--color-accent-cyan)] md:text-xs">
+            {section.eyebrow}
+          </p>
+          <h2 className="hero-glow mt-3 max-w-4xl text-display text-[clamp(1.6rem,2.2vw+0.8rem,3rem)] font-bold leading-[1.06] text-white/95">
+            {section.title}
+          </h2>
+        </div>
+
         <AnimatePresence initial={false} mode="popLayout">
           <motion.div
             key={`${section.beats[active]?.title}-bg`}
@@ -2157,7 +2336,7 @@ function StudioView({
             className="absolute inset-0"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
-            transition={{ duration: 1.05, ease: "easeOut" }}
+            transition={{ duration: 1.45, ease: "easeOut" }}
           >
             <div
               aria-hidden
@@ -2180,10 +2359,10 @@ function StudioView({
           <motion.div
             key={section.beats[active]?.title}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute inset-0"
+            className="absolute inset-0 pt-28 md:pt-32"
             exit={{ opacity: 0, y: direction > 0 ? -90 : 90 }}
             initial={{ opacity: 0, y: direction > 0 ? 90 : -90 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+            transition={{ duration: 1.1, ease: "easeOut" }}
           >
             {/* Layout split izquierda / derecha — todos los beats */}
             <div className="grid h-full md:grid-cols-[1fr_1fr]">
@@ -2198,7 +2377,7 @@ function StudioView({
                       className="font-mono text-xs uppercase tracking-[0.22em]"
                       style={{ color: activeLook.accent }}
                     >
-                      Estudio en accion · {`0${active + 1}`} /{" "}
+                      Estudio en acción · {`0${active + 1}`} /{" "}
                       {`0${section.beats.length}`}
                     </p>
                   </div>
@@ -2260,34 +2439,41 @@ function StudioPanel({
     offset: ["start start", "end end"],
   });
   const syncedScroll = useSpring(scrollYProgress, {
-    stiffness: 88,
-    damping: 24,
-    mass: 0.34,
+    stiffness: 70,
+    damping: 30,
+    mass: 0.55,
   });
-  const mapped = useTransform(
-    syncedScroll,
-    [0.38, 0.985],
-    [0, section.beats.length],
-  );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const prevProgressRef = useRef(0);
   const lastStudioTransitionAt = useRef(0);
-  const STUDIO_TRANSITION_MIN_MS = 1300;
+  const STUDIO_STEP_DELTA = 0.08;
+  const STUDIO_TRANSITION_MIN_MS = 3600;
+  const STUDIO_OPENER_GATE = 0.94;
   const sectionOpacity = useTransform(
     syncedScroll,
-    [0, 0.08, 0.84, 1],
+    [0, 0.34, 0.94, 1],
     [0.15, 1, 1, 0.08],
   );
-  const sectionY = useTransform(syncedScroll, [0, 0.08, 1], [30, 0, -42]);
+  const sectionY = useTransform(syncedScroll, [0, 0.34, 1], [40, 0, -42]);
 
-  useMotionValueEvent(mapped, "change", (v) => {
-    const next = Math.max(
-      0,
-      Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
-    );
+  useMotionValueEvent(syncedScroll, "change", (value) => {
+    const previousProgress = prevProgressRef.current;
+    const delta = value - previousProgress;
+    prevProgressRef.current = value;
+    if (Math.abs(delta) < STUDIO_STEP_DELTA) {
+      return;
+    }
+    const nextDirection = delta > 0 ? 1 : -1;
     const now = Date.now();
     setActive((prev) => {
-      const stepped = stepTowardIndex(prev, next);
+      if (value < STUDIO_OPENER_GATE) {
+        return prev;
+      }
+      const stepped = Math.max(
+        0,
+        Math.min(section.beats.length - 1, prev + nextDirection),
+      );
       if (prev === stepped) {
         return prev;
       }
@@ -2303,8 +2489,9 @@ function StudioPanel({
   return (
     <section
       ref={rootRef}
-      className="relative h-[calc(100svh*8.8)]"
+      className="relative h-[calc(100svh*30)]"
       id={section.id}
+      style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.article
         className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))] md:top-16 md:h-[calc(100svh-4rem)]"
@@ -2543,13 +2730,13 @@ function GenericNarrativePanel({
   });
   const sectionOpacity = useTransform(
     syncedScroll,
-    isFinalTrustPanel ? [0, 0.08, 1] : [0, 0.08, 0.84, 1],
+    isFinalTrustPanel ? [0, 0.2, 1] : [0, 0.2, 0.84, 1],
     isFinalTrustPanel ? [0.15, 1, 1] : [0.15, 1, 1, 0.08],
   );
   const sectionY = useTransform(
     syncedScroll,
-    isFinalTrustPanel ? [0, 0.08, 1] : [0, 0.08, 1],
-    isFinalTrustPanel ? [24, 0, 0] : [24, 0, -36],
+    isFinalTrustPanel ? [0, 0.2, 1] : [0, 0.2, 1],
+    isFinalTrustPanel ? [28, 0, 0] : [28, 0, -36],
   );
 
   return (
@@ -2557,14 +2744,28 @@ function GenericNarrativePanel({
       ref={rootRef}
       id={section.id}
       className="relative h-[185vh]"
-      style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+      style={
+        isFinalTrustPanel
+          ? { scrollSnapAlign: "start", scrollSnapStop: "always" }
+          : { scrollSnapAlign: "start", scrollSnapStop: "always" }
+      }
     >
       <motion.article
-        className="sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:top-16 md:h-[calc(100svh-4rem)]"
+        className={
+          isFinalTrustPanel
+            ? "relative min-h-[100svh] overflow-visible border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:sticky md:top-16 md:h-[calc(100svh-4rem)] md:overflow-hidden"
+            : "sticky top-0 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))] md:top-16 md:h-[calc(100svh-4rem)]"
+        }
         style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} />
-        <div className="relative z-10 mx-auto h-full w-full max-w-6xl overflow-y-auto px-5 py-14 md:overflow-visible md:py-18">
+        <div
+          className={
+            isFinalTrustPanel
+              ? "relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-14 md:py-18"
+              : "relative z-10 mx-auto h-full w-full max-w-6xl overflow-y-auto px-5 py-14 md:overflow-visible md:py-18"
+          }
+        >
           {renderer}
         </div>
       </motion.article>
