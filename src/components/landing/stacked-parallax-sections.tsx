@@ -7,6 +7,7 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
 } from "framer-motion";
 import {
@@ -25,6 +26,7 @@ import {
   ShoppingCart,
   UserRoundCog,
 } from "lucide-react";
+import Image from "next/image";
 import { type ReactNode, useMemo, useRef, useState } from "react";
 
 type NarrativeBeat = {
@@ -43,6 +45,10 @@ type NarrativeSection = {
 type StackedParallaxSectionsProps = {
   sections: NarrativeSection[];
 };
+
+const CINEMATIC_EASE = [0.22, 1, 0.36, 1] as const;
+const CINEMATIC_ENTER = { duration: 0.88, ease: CINEMATIC_EASE } as const;
+const CINEMATIC_DISSOLVE = { duration: 1.08, ease: CINEMATIC_EASE } as const;
 
 function BgLayer({
   index,
@@ -427,16 +433,16 @@ function ServicesView({
                 {`0${active + 1}`} / {`0${section.beats.length}`} ·{" "}
                 {activeMeta.label}
               </p>
-              <p className="mt-4 max-w-2xl font-mono text-[11px] uppercase tracking-[0.22em] text-white/60 md:text-xs">
+              <p className="mt-4 max-w-2xl font-mono text-xs uppercase tracking-[0.22em] text-white/60 md:text-xs">
                 {activeNarrative}
               </p>
               <p
-                className="service-title mt-5 max-w-5xl text-[clamp(2.2rem,4.8vw+0.3rem,5.3rem)] font-extrabold leading-[0.9]"
+                className="service-title mt-5 max-w-5xl text-[clamp(2.2rem,4.8vw+0.3rem,5.3rem)] font-extrabold leading-[0.95]"
                 style={{ color: activeMeta.color }}
               >
                 {section.beats[active]?.title}
               </p>
-              <p className="mt-7 max-w-3xl text-base leading-8 text-[var(--color-text-secondary)] md:text-lg">
+              <p className="mt-7 max-w-3xl text-base leading-[1.7] text-[var(--color-text-secondary)] md:text-lg">
                 {section.beats[active]?.description}
               </p>
             </div>
@@ -544,7 +550,7 @@ function MethodView({
         <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
           {section.eyebrow}
         </p>
-        <h2 className="hero-glow mt-4 max-w-xl text-display text-[clamp(2rem,3vw+0.9rem,4rem)] font-bold leading-[1.04]">
+        <h2 className="hero-glow mt-4 max-w-xl text-display fs-d-lg font-bold">
           {section.title}
         </h2>
         <p className="mt-4 max-w-xl text-[var(--color-text-secondary)]">
@@ -573,15 +579,15 @@ function MethodView({
             className="relative w-full pl-8 md:pl-14"
             exit={{ opacity: 0, y: direction > 0 ? -90 : 90 }}
             initial={{ opacity: 0, y: direction > 0 ? 90 : -90 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
+            transition={CINEMATIC_ENTER}
           >
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-lime)]">
               Etapa {`0${active + 1}`}
             </p>
-            <p className="mt-3 text-[clamp(2rem,3vw+0.6rem,3.2rem)] font-semibold leading-[0.95]">
+            <p className="mt-3 fs-d-md font-semibold">
               {section.beats[active]?.title}
             </p>
-            <p className="mt-5 max-w-xl text-base leading-8 text-[var(--color-text-secondary)]">
+            <p className="mt-5 max-w-xl text-base leading-[1.7] text-[var(--color-text-secondary)]">
               {section.beats[active]?.description}
             </p>
             <div className="mt-8 flex max-w-sm items-center gap-2.5">
@@ -683,213 +689,243 @@ function MethodPanel({
 
 function VisionView({
   section,
-  active,
   progress,
 }: {
   section: NarrativeSection;
-  active: number;
   progress: MotionValue<number>;
 }) {
   const reducedMotion = useReducedMotion();
-  const meta = [
-    { icon: ShoppingCart, color: "#00D4FF", glow: "rgba(0,212,255,0.5)" },
-    { icon: FileText, color: "#D9E120", glow: "rgba(217,225,32,0.5)" },
-    { icon: Building2, color: "#FF9500", glow: "rgba(255,149,0,0.5)" },
-    { icon: Cable, color: "#7C3AED", glow: "rgba(124,58,237,0.45)" },
-    { icon: Bot, color: "#00D4FF", glow: "rgba(0,212,255,0.5)" },
+  const links = [
+    "/productos/pos",
+    "/productos/facturacion-electronica",
+    "/productos/crm",
+    "/productos/erp",
+    "/productos/chatbots-especializados",
   ] as const;
-  const layerA = useTransform(progress, [0, 1], [70, -110]);
-  const layerB = useTransform(progress, [0, 1], [-30, 70]);
-  const orbitRadiusX = 220;
-  const orbitRadiusY = 150;
-  const openerOpacity = useTransform(progress, [0, 0.18, 0.32], [1, 1, 0]);
-  const openerY = useTransform(progress, [0, 0.35], [0, -46]);
-  const compOpacity = useTransform(progress, [0.16, 0.34], [0, 1]);
+  const icons = [ShoppingCart, FileText, Building2, Cable, Bot] as const;
+  const legends = [
+    "Operación de ventas",
+    "Cumplimiento fiscal",
+    "Relación comercial",
+    "Integración interna",
+    "Atención especializada",
+  ] as const;
+  const tones = [
+    "#00D4FF",
+    "#D9E120",
+    "#FF9500",
+    "#7C3AED",
+    "#00BCD4",
+  ] as const;
+  const revealMapped = useTransform(
+    progress,
+    [0.04, 0.78],
+    [0, section.beats.length],
+  );
+  const [revealedCount, setRevealedCount] = useState(1);
+
+  useMotionValueEvent(revealMapped, "change", (value) => {
+    const nextCount = Math.max(
+      1,
+      Math.min(section.beats.length, Math.floor(value + Number.EPSILON) + 1),
+    );
+    setRevealedCount(nextCount);
+  });
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col">
+    <div className="relative md:h-full">
       <motion.div
-        className="pointer-events-none absolute inset-0 z-20 flex items-center"
-        style={{ opacity: openerOpacity, y: openerY }}
-      >
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
-            {section.eyebrow}
-          </p>
-          <h2 className="hero-glow mt-4 max-w-5xl text-display text-[clamp(2.2rem,3.6vw+0.9rem,4.2rem)] font-bold leading-[1.04]">
-            {section.title}
-          </h2>
-          <p className="mt-4 max-w-3xl text-[var(--color-text-secondary)]">
-            {section.lead}
-          </p>
+        aria-hidden
+        animate={
+          reducedMotion
+            ? undefined
+            : {
+                opacity: [0.58, 0.9, 0.62],
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }
+        }
+        className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-screen -translate-x-1/2 md:block"
+        style={{
+          background:
+            "radial-gradient(circle at 18% 24%, rgba(0,212,255,0.2), transparent 46%), radial-gradient(circle at 82% 28%, rgba(124,58,237,0.2), transparent 48%), radial-gradient(circle at 34% 82%, rgba(255,107,107,0.14), transparent 50%), linear-gradient(110deg, rgba(0,212,255,0.08), rgba(124,58,237,0.08), rgba(255,107,107,0.06))",
+          backgroundSize: "100% 100%, 100% 100%, 100% 100%, 220% 220%",
+        }}
+        transition={
+          reducedMotion
+            ? undefined
+            : { duration: 8.4, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY }
+        }
+      />
+      <div className="mx-auto flex w-full max-w-4xl flex-col justify-start pt-4 pb-10 md:h-full md:justify-center md:pt-0 md:pb-0">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-cyan)]">
+          Exploración de producto ✨
+        </p>
+        <div className="mt-3 flex items-center gap-3">
+          <Image
+            alt="BHRK"
+            className="h-8 w-auto opacity-80"
+            height={32}
+            src="/brand/bhrk-logo-primary.png"
+            width={132}
+          />
+          <span className="rounded-full border border-white/20 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/70">
+            🧪 En incubación
+          </span>
         </div>
-      </motion.div>
+        <h3 className="mt-3 max-w-3xl text-display text-[clamp(1.2rem,1.1vw+0.8rem,2.15rem)] font-bold leading-[1.08]">
+          Estos son los productos que estamos trabajando y queremos que pronto los veas.
+        </h3>
+        <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--color-text-secondary)]">
+          Priorizamos líneas con impacto directo en ingresos, continuidad operativa
+          y control del negocio. Cada frente avanza por hitos hasta llegar a beta.
+        </p>
 
-      <motion.div
-        className="grid min-h-0 flex-1 gap-6 md:grid-cols-[1fr_320px] md:items-end"
-        style={{ opacity: compOpacity }}
-      >
-        <div className="grid gap-3 md:hidden">
-          {section.beats.map((beat, idx) => {
-            const Icon = meta[idx].icon;
-            const isActive = idx === active;
+        <div className="mt-5 border-y border-white/12 md:hidden">
+          <AnimatePresence initial={false}>
+            {section.beats.slice(0, revealedCount).map((beat, idx) => {
+            const Icon = icons[idx];
             return (
-              <div
-                key={`mobile-${beat.title}`}
-                className="rounded-2xl border px-4 py-3"
-                style={{
-                  background: isActive ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)",
-                  borderColor: isActive ? `${meta[idx].color}99` : "rgba(255,255,255,0.16)",
-                  boxShadow: isActive ? `0 0 20px ${meta[idx].glow}` : undefined,
-                }}
+              <motion.a
+                key={`vision-mobile-${beat.title}`}
+                animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                className="relative block border-b border-white/10 py-3 last:border-b-0"
+                exit={{ filter: "blur(3px)", opacity: 0, y: -10 }}
+                href={links[idx]}
+                initial={{ filter: "blur(6px)", opacity: 0, y: 12 }}
+                transition={{ ...CINEMATIC_ENTER, duration: 0.74, delay: idx * 0.03 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <Icon
-                    className="h-4 w-4"
-                    style={{ color: isActive ? meta[idx].color : "#c0c0c7" }}
-                  />
-                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/70">
-                    Modulo 0{idx + 1}
+                <motion.div
+                  aria-hidden
+                  className="pointer-events-none absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-[var(--color-accent-cyan)]/70 to-transparent"
+                  animate={reducedMotion ? undefined : { opacity: [0.22, 0.8, 0.22] }}
+                  transition={
+                    reducedMotion
+                      ? undefined
+                      : {
+                          delay: idx * 0.12,
+                          duration: 1.5,
+                          ease: "easeInOut",
+                          repeat: Number.POSITIVE_INFINITY,
+                        }
+                  }
+                />
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4" style={{ color: tones[idx % tones.length] }} />
+                  <p className="font-mono text-xs uppercase tracking-[0.16em]" style={{ color: tones[idx] }}>
+                    Línea 0{idx + 1}
                   </p>
+                  <span className="rounded-full border border-white/18 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/65">
+                    Muy pronto
+                  </span>
                 </div>
                 <p
-                  className="mt-2 text-sm font-semibold"
-                  style={{ color: isActive ? meta[idx].color : "#f4f4f5" }}
+                  className="mt-1.5 text-base font-semibold text-transparent"
+                  style={{
+                    backgroundImage: `linear-gradient(90deg, ${tones[idx % tones.length]}, #F4F4F5)`,
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                  }}
                 >
                   {beat.title}
                 </p>
-              </div>
+                <p className="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">
+                  {legends[idx]}
+                </p>
+                <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white/70">
+                  Saber más
+                </p>
+              </motion.a>
             );
-          })}
-        </div>
-
-        <div className="relative min-h-0 h-full overflow-visible rounded-[1.8rem] border border-white/12 bg-black/24 hidden md:block">
-          <motion.svg
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full opacity-50"
-            focusable="false"
-            preserveAspectRatio="none"
-            style={reducedMotion ? undefined : { y: layerA }}
-            viewBox="0 0 1200 680"
-          >
-            <path
-              d="M120 120 C 360 240, 590 80, 820 230 C 930 300, 1040 280, 1140 350"
-              fill="none"
-              stroke="rgba(0,212,255,0.28)"
-              strokeWidth="1.35"
-            />
-            <path
-              d="M120 560 C 290 500, 500 610, 710 500 C 900 400, 1030 520, 1140 460"
-              fill="none"
-              stroke="rgba(217,225,32,0.23)"
-              strokeWidth="1.35"
-            />
-          </motion.svg>
-
-          <motion.svg
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full opacity-40"
-            focusable="false"
-            preserveAspectRatio="none"
-            style={reducedMotion ? undefined : { y: layerB }}
-            viewBox="0 0 1200 680"
-          >
-            {section.beats.map((beat, idx) => {
-              const angle =
-                (idx / section.beats.length) * Math.PI * 2 - Math.PI / 2;
-              const x = 600 + Math.cos(angle) * orbitRadiusX;
-              const y = 340 + Math.sin(angle) * orbitRadiusY;
-              return (
-                <line
-                  key={beat.title}
-                  stroke={
-                    idx === active ? meta[idx].color : "rgba(255,255,255,0.2)"
-                  }
-                  strokeWidth={idx === active ? 1.8 : 1}
-                  x1="600"
-                  x2={x}
-                  y1="340"
-                  y2={y}
-                />
-              );
             })}
-          </motion.svg>
-
-          <motion.div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-black/45 backdrop-blur">
-            <div className="flex h-full items-center justify-center">
-              <span className="font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-text-muted)]">
-                Lab Core
-              </span>
-            </div>
-          </motion.div>
-
-          {section.beats.map((beat, idx) => {
-            const Icon = meta[idx].icon;
-            const angle =
-              (idx / section.beats.length) * Math.PI * 2 - Math.PI / 2;
-            const x = Math.cos(angle) * orbitRadiusX;
-            const y = Math.sin(angle) * orbitRadiusY;
-            const isActive = idx === active;
-            return (
-              <motion.div
-                key={beat.title}
-                animate={{
-                  opacity: isActive ? 1 : 0.52,
-                  scale: isActive ? 1.1 : 0.9,
-                }}
-                className="absolute left-1/2 top-1/2 -ml-16 -mt-10 w-32"
-                initial={false}
-                style={{ x, y }}
-                transition={{ duration: 0.25 }}
-              >
-                <div
-                  className="rounded-2xl border border-white/18 bg-black/50 px-3 py-3 text-center backdrop-blur"
-                  style={{
-                    boxShadow: isActive
-                      ? `0 0 28px ${meta[idx].glow}`
-                      : undefined,
-                  }}
-                >
-                  <Icon
-                    className="mx-auto h-4 w-4"
-                    style={{ color: isActive ? meta[idx].color : "#c0c0c7" }}
-                  />
-                  <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/65">
-                    M0{idx + 1}
-                  </p>
-                  <p
-                    className="mt-1 text-xs font-semibold"
-                    style={{ color: isActive ? meta[idx].color : "#f4f4f5" }}
-                  >
-                    {beat.title}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+          </AnimatePresence>
         </div>
 
-        <motion.div
-          key={section.beats[active]?.title}
-          animate={{ opacity: 1, y: 0 }}
-          className="pb-2 md:pb-6"
-          initial={{ opacity: 0, y: 16 }}
-          transition={{ duration: 0.24 }}
-        >
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-cyan)]">
-            Muy pronto
-          </p>
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-lime)]">
-            Incubando modulo {`0${active + 1}`}
-          </p>
-          <p className="mt-2 text-lg font-semibold md:text-xl">
-            {section.beats[active]?.title}
-          </p>
-          <p className="mt-2 text-sm leading-7 text-[var(--color-text-secondary)]">
-            {section.beats[active]?.description}
-          </p>
-        </motion.div>
-      </motion.div>
+        <div className="mt-6 hidden border-y border-white/12 md:block">
+          <AnimatePresence initial={false}>
+            {section.beats.slice(0, revealedCount).map((beat, idx) => (
+              <motion.a
+                key={`vision-link-${beat.title}`}
+                animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                className="group relative grid gap-2 border-b border-white/10 py-3 last:border-b-0 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-3"
+                exit={{ filter: "blur(3px)", opacity: 0, y: -10 }}
+                href={links[idx]}
+                initial={{ filter: "blur(6px)", opacity: 0, y: 14 }}
+                transition={{ ...CINEMATIC_ENTER, duration: 0.76, delay: idx * 0.04 }}
+              >
+              <motion.div
+                aria-hidden
+                className="pointer-events-none absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-[var(--color-accent-cyan)]/60 to-transparent opacity-70"
+                animate={reducedMotion ? undefined : { opacity: [0.25, 0.75, 0.25] }}
+                transition={
+                  reducedMotion
+                    ? undefined
+                    : {
+                        delay: idx * 0.15,
+                        duration: 1.6,
+                        ease: "easeInOut",
+                        repeat: Number.POSITIVE_INFINITY,
+                      }
+                }
+              />
+              <div className="flex items-center gap-2">
+                {(() => {
+                  const Icon = icons[idx];
+                  return (
+                    <Icon
+                      className="h-4 w-4 transition group-hover:text-[var(--color-accent-cyan)]"
+                      style={{ color: tones[idx % tones.length] }}
+                    />
+                  );
+                })()}
+                <p className="font-mono text-xs uppercase tracking-[0.16em] text-white/55">
+                  Línea 0{idx + 1}
+                </p>
+                <span className="rounded-full border border-white/18 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/65">
+                  Muy pronto 🎄
+                </span>
+              </div>
+              <p
+                className="text-sm font-semibold text-transparent transition md:text-[15px]"
+                style={{
+                  backgroundImage: `linear-gradient(90deg, ${tones[idx % tones.length]}, #F4F4F5)`,
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                }}
+              >
+                {beat.title}
+              </p>
+              <div className="flex items-center justify-start gap-2 md:justify-end">
+                <span className="hidden rounded-full border border-white/16 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/58 md:inline-flex">
+                  {legends[idx]}
+                </span>
+                <p className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--color-text-muted)] transition group-hover:text-white/80">
+                  Saber más
+                </p>
+                <motion.span
+                  aria-hidden
+                  animate={
+                    reducedMotion
+                      ? undefined
+                      : { opacity: [0.38, 0.9, 0.38], x: [0, 3, 0] }
+                  }
+                  className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent-cyan)]/90 shadow-[0_0_12px_rgba(0,212,255,0.8)]"
+                  transition={
+                    reducedMotion
+                      ? undefined
+                      : {
+                          delay: idx * 0.16,
+                          duration: 1.8,
+                          ease: "easeInOut",
+                          repeat: Number.POSITIVE_INFINITY,
+                        }
+                  }
+                />
+              </div>
+              </motion.a>
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }
@@ -906,45 +942,39 @@ function VisionPanel({
     target: rootRef,
     offset: ["start start", "end end"],
   });
-  const mapped = useTransform(
-    scrollYProgress,
-    [0.08, 0.92],
-    [0, section.beats.length],
-  );
-  const [active, setActive] = useState(0);
   const sectionOpacity = useTransform(
     scrollYProgress,
-    [0, 0.08, 0.86, 1],
-    [0.15, 1, 1, 0.05],
+    [0, 0.1, 0.95, 1],
+    [0, 1, 1, 0.9],
   );
-  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -48]);
-
-  useMotionValueEvent(mapped, "change", (v) => {
-    setActive(
-      Math.max(
-        0,
-        Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
-      ),
-    );
+  const sectionY = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.95, 1],
+    [14, 0, -4, -10],
+  );
+  const sectionOpacitySmooth = useSpring(sectionOpacity, {
+    stiffness: 90,
+    damping: 26,
+    mass: 0.42,
+  });
+  const sectionYSmooth = useSpring(sectionY, {
+    stiffness: 85,
+    damping: 24,
+    mass: 0.44,
   });
 
   return (
     <section
       ref={rootRef}
-      className="relative h-[calc(100svh*7.6)]"
-      id={section.id}
+      className="relative z-10 min-h-[100svh] md:h-[calc(100svh*3.6)]"
     >
       <motion.article
-        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))]"
-        style={{ opacity: sectionOpacity, y: sectionY }}
+        className="relative min-h-[100svh] overflow-visible border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))] md:sticky md:top-0 md:h-[100svh] md:overflow-hidden"
+        style={{ opacity: sectionOpacitySmooth, y: sectionYSmooth }}
       >
         <BgLayer index={index} />
-        <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-12 md:py-14">
-          <VisionView
-            active={active}
-            progress={scrollYProgress}
-            section={section}
-          />
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 py-12 md:h-full md:py-16">
+          <VisionView progress={scrollYProgress} section={section} />
         </div>
       </motion.article>
     </section>
@@ -2045,16 +2075,6 @@ function StudioView({
   direction: 1 | -1;
   progress: MotionValue<number>;
 }) {
-  const reducedMotion = useReducedMotion();
-  // Opener exits quickly so beat 0 content has time to be fully visible
-  // Beat 0 is active during progress ≈ 0.08–0.22; content must reach opacity 1
-  // before that window closes.
-  const openerOpacity = useTransform(progress, [0, 0.05, 0.12], [1, 1, 0]);
-  const openerY = useTransform(progress, [0, 0.18], [0, -40]);
-  const compOpacity = useTransform(progress, [0.04, 0.15], [0, 1]);
-  const brandScale = useTransform(progress, [0, 0.12], [1, 1.08]);
-  const brandGlow = useTransform(progress, [0, 0.08, 0.14], [0.22, 0.5, 0.26]);
-  const brandStripeX = useTransform(progress, [0, 0.12], [-40, 34]);
   const studioLooks = [
     {
       accent: "#00D4FF",
@@ -2095,37 +2115,7 @@ function StudioView({
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
-      <motion.div
-        className="pointer-events-none absolute inset-0 z-20 flex items-center"
-        style={{ opacity: openerOpacity, y: openerY }}
-      >
-        <div className="w-full">
-          <motion.div
-            className="relative max-w-4xl"
-            style={reducedMotion ? undefined : { scale: brandScale }}
-          >
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute -left-5 top-0 h-16 w-16 rounded-full bg-[var(--color-accent-cyan)]/20 blur-2xl"
-              style={reducedMotion ? undefined : { opacity: brandGlow, x: brandStripeX }}
-            />
-            <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
-              {section.eyebrow} · BHRK Codelabs
-            </p>
-            <h2 className="hero-glow mt-5 text-display text-[clamp(2.1rem,3.2vw+0.8rem,3.9rem)] font-bold leading-[1.06]">
-              {section.title}
-            </h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-              {section.lead}
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="relative min-h-0 flex-1 overflow-hidden bg-black"
-        style={{ opacity: compOpacity }}
-      >
+      <div className="relative z-20 min-h-0 flex-1 overflow-hidden bg-black">
         <AnimatePresence initial={false} mode="popLayout">
           <motion.div
             key={`${section.beats[active]?.title}-bg`}
@@ -2133,7 +2123,7 @@ function StudioView({
             className="absolute inset-0"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
+            transition={CINEMATIC_DISSOLVE}
           >
             <div
               aria-hidden
@@ -2155,11 +2145,11 @@ function StudioView({
         <AnimatePresence initial={false} mode="popLayout">
           <motion.div
             key={section.beats[active]?.title}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             className="absolute inset-0"
-            exit={{ opacity: 0, y: direction > 0 ? -90 : 90 }}
-            initial={{ opacity: 0, y: direction > 0 ? 90 : -90 }}
-            transition={{ duration: 0.27, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 0.985, y: direction > 0 ? -120 : 120 }}
+            initial={{ opacity: 0, scale: 0.985, y: direction > 0 ? 120 : -120 }}
+            transition={CINEMATIC_ENTER}
           >
             {/* Layout split izquierda / derecha — todos los beats */}
             <div className="grid h-full md:grid-cols-[1fr_1fr]">
@@ -2181,7 +2171,7 @@ function StudioView({
                   <p className="text-[clamp(1.9rem,3.4vw+0.4rem,3.8rem)] font-semibold leading-[0.94] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
                     {section.beats[active]?.title}
                   </p>
-                  <p className="mt-5 text-base leading-8 text-white/90 md:text-lg">
+                  <p className="mt-5 text-base leading-[1.7] text-white/90 md:text-lg">
                     {activeLook.detail}
                   </p>
                   <p className="mt-3 text-sm font-medium text-white/80 md:text-base">
@@ -2218,7 +2208,7 @@ function StudioView({
             </div>
           </motion.div>
         </AnimatePresence>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -2237,17 +2227,27 @@ function StudioPanel({
   });
   const mapped = useTransform(
     scrollYProgress,
-    [0.08, 0.92],
+    [0.08, 0.94],
     [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const sectionOpacity = useTransform(
     scrollYProgress,
-    [0, 0.08, 0.84, 1],
-    [0.15, 1, 1, 0.08],
+    [0, 0.08, 0.95, 1],
+    [0.24, 1, 1, 0.82],
   );
-  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -42]);
+  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -18]);
+  const sectionOpacitySmooth = useSpring(sectionOpacity, {
+    stiffness: 88,
+    damping: 26,
+    mass: 0.46,
+  });
+  const sectionYSmooth = useSpring(sectionY, {
+    stiffness: 84,
+    damping: 24,
+    mass: 0.48,
+  });
 
   useMotionValueEvent(mapped, "change", (v) => {
     const next = Math.max(
@@ -2264,14 +2264,10 @@ function StudioPanel({
   });
 
   return (
-    <section
-      ref={rootRef}
-      className="relative h-[calc(100svh*6.1)]"
-      id={section.id}
-    >
+    <section ref={rootRef} className="relative h-[calc(100svh*12.4)]">
       <motion.article
         className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))]"
-        style={{ opacity: sectionOpacity, y: sectionY }}
+        style={{ opacity: sectionOpacitySmooth, y: sectionYSmooth }}
       >
         <BgLayer index={index} />
         <div className="relative z-10 mx-auto h-full w-full max-w-[95vw] px-4 py-12 md:px-6 md:py-14">
@@ -2295,7 +2291,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const isHuman = humanCheck.trim().toUpperCase() === "BHRK";
-  const hasContact = contact.trim().length >= 6;
+  const hasContact = contact.replace(/\D/g, "").length >= 7;
 
   const contactPayload = useMemo(() => {
     const trimmedContact = contact.trim();
@@ -2303,7 +2299,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
     return [
       "Hola BHRK, quiero hablar de mi proyecto.",
       "",
-      `Contacto: ${trimmedContact || "No indicado"}`,
+      `Número de contacto: ${trimmedContact || "No indicado"}`,
       `Necesidad: ${trimmedBrief || "Quiero orientación para el siguiente paso"}`,
     ].join("\n");
   }, [brief, contact]);
@@ -2314,7 +2310,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
   );
   const mailtoHref = useMemo(
     () =>
-      `mailto:hola@bhrkcodelabs.com?subject=${encodeURIComponent("Consulta desde sitio web")}&body=${encodeURIComponent(contactPayload)}`,
+      `mailto:hola@bhrkcodelabs.com?subject=${encodeURIComponent("Solicitud de llamada desde sitio web")}&body=${encodeURIComponent(contactPayload)}`,
     [contactPayload],
   );
 
@@ -2324,7 +2320,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
       return false;
     }
     if (!hasContact) {
-      setFeedback("Déjanos un correo o número válido para responderte.");
+      setFeedback("Déjanos un número válido para poder llamarte.");
       return false;
     }
     if (!isHuman) {
@@ -2339,10 +2335,10 @@ function TrustView({ section }: { section: NarrativeSection }) {
     if (!validateLead()) {
       return;
     }
-    window.open(whatsappHref, "_blank", "noopener,noreferrer");
+    window.location.href = whatsappHref;
   };
 
-  const handleEmail = () => {
+  const handleCallRequest = () => {
     if (!validateLead()) {
       return;
     }
@@ -2378,12 +2374,12 @@ function TrustView({ section }: { section: NarrativeSection }) {
           ))}
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-[linear-gradient(162deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-5 md:p-6">
+        <div className="rounded-2xl border border-white/16 bg-[linear-gradient(162deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-5 md:p-6 shadow-[0_18px_40px_rgba(0,0,0,0.28)]">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-lime)]">
             Contacto directo
           </p>
           <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-            Cuéntanos qué necesitas y te respondemos por WhatsApp o correo, como te quede mejor.
+            Déjanos tu número y tu necesidad. Te contactamos con una propuesta clara y sin rodeos.
           </p>
           <a
             className="mt-4 inline-flex text-xl font-semibold text-[#ff4d4f] hover:text-[#ff7875]"
@@ -2394,16 +2390,16 @@ function TrustView({ section }: { section: NarrativeSection }) {
 
           <div className="mt-6 grid gap-3">
             <input
-              className="w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
-              inputMode="email"
+              className="w-full rounded-xl border border-white/24 bg-white/[0.08] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
+              inputMode="tel"
               onChange={(event) => setContact(event.target.value)}
-              placeholder="Tu WhatsApp o correo"
+              placeholder="Tu número de contacto"
               value={contact}
             />
             <textarea
-              className="min-h-24 w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
+              className="min-h-24 w-full rounded-xl border border-white/24 bg-white/[0.08] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
               onChange={(event) => setBrief(event.target.value)}
-              placeholder="¿Qué quieres resolver?"
+              placeholder="Cuéntanos brevemente qué necesitas y te llamamos"
               value={brief}
             />
             <input
@@ -2416,7 +2412,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
               value={website}
             />
             <input
-              className="w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
+              className="w-full rounded-xl border border-white/24 bg-white/[0.08] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
               onChange={(event) => setHumanCheck(event.target.value)}
               placeholder='Confirmación rápida: escribe "BHRK"'
               value={humanCheck}
@@ -2429,19 +2425,19 @@ function TrustView({ section }: { section: NarrativeSection }) {
               onClick={handleWhatsApp}
               type="button"
             >
-              Enviar por WhatsApp
+              Escríbenos a WhatsApp
             </button>
             <button
               className="inline-flex rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-accent-cyan)] hover:text-[var(--color-accent-cyan)]"
-              onClick={handleEmail}
+              onClick={handleCallRequest}
               type="button"
             >
-              Enviar por correo
+              Queremos llamarte
             </button>
           </div>
 
           <p className="mt-4 text-xs leading-6 text-[var(--color-text-muted)]">
-            Si prefieres, también puedes llamarnos directo sin llenar el formulario.
+            También puedes llamarnos directo y te atendemos en el momento.
           </p>
           {feedback ? (
             <p className="mt-2 text-xs leading-6 text-[#ff8f8f]">{feedback}</p>
@@ -2494,31 +2490,261 @@ function GenericNarrativePanel({
   renderer: ReactNode;
 }) {
   const rootRef = useRef<HTMLElement | null>(null);
+  const isTrustPanel = section.id === "info-verificada";
   const { scrollYProgress } = useScroll({
     target: rootRef,
     offset: ["start start", "end end"],
   });
   const sectionOpacity = useTransform(
     scrollYProgress,
-    [0, 0.08, 0.84, 1],
-    [0.15, 1, 1, 0.08],
+    isTrustPanel ? [0, 0.08, 0.96, 1] : [0, 0.08, 0.84, 1],
+    isTrustPanel ? [0.2, 1, 1, 0.88] : [0.15, 1, 1, 0.08],
   );
-  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [24, 0, -36]);
+  const sectionY = useTransform(
+    scrollYProgress,
+    isTrustPanel ? [0, 0.08, 0.96, 1] : [0, 0.08, 1],
+    isTrustPanel ? [16, 0, -6, -14] : [24, 0, -36],
+  );
 
   return (
     <section
       ref={rootRef}
       id={section.id}
-      className="relative h-[185vh]"
+      className={isTrustPanel ? "relative py-14 md:py-18" : "relative h-[185vh]"}
       style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.article
-        className="sticky top-16 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]"
-        style={{ opacity: sectionOpacity, y: sectionY }}
+        className={
+          isTrustPanel
+            ? "relative overflow-visible border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(18,18,21,0.98),rgba(33,33,39,0.92))]"
+            : "sticky top-16 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]"
+        }
+        style={isTrustPanel ? undefined : { opacity: sectionOpacity, y: sectionY }}
+      >
+        {isTrustPanel ? null : <BgLayer index={index} />}
+        <div
+          className={
+            isTrustPanel
+              ? "relative z-10 mx-auto w-full max-w-6xl px-5 py-10 md:py-12"
+              : "relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-14 md:py-18"
+          }
+        >
+          {renderer}
+        </div>
+      </motion.article>
+    </section>
+  );
+}
+
+function PitchBridgePanel({
+  section,
+  index,
+  tone,
+}: {
+  section: NarrativeSection;
+  index: number;
+  tone: "vision" | "studio";
+}) {
+  const reducedMotion = useReducedMotion();
+  const rootRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: rootRef,
+    offset: ["start start", "end end"],
+  });
+  const sectionOpacity = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0, 0.2, 0.9, 1] : [0, 0.1, 0.84, 1],
+    tone === "vision" ? [0, 1, 1, 0.72] : [0.22, 1, 1, 0.06],
+  );
+  const sectionY = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0, 0.2, 1] : [0, 0.1, 1],
+    tone === "vision" ? [20, 0, -16] : [24, 0, -48],
+  );
+  const aura = useTransform(scrollYProgress, [0, 0.5, 1], [0.22, 0.42, 0.2]);
+  const eyebrowY = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.02, 0.24, 0.88, 1] : [0, 0.12, 0.9, 1],
+    tone === "vision" ? [20, 0, 0, -10] : [18, 0, 0, -12],
+  );
+  const eyebrowOpacity = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.02, 0.22, 0.88, 1] : [0, 0.1, 0.9, 1],
+    [0, 1, 1, 0],
+  );
+  const headingY = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.08, 0.32, 0.92, 1] : [0.02, 0.2, 0.92, 1],
+    tone === "vision" ? [24, 0, 0, -12] : [20, 0, 0, -14],
+  );
+  const headingOpacity = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.08, 0.3, 0.92, 1] : [0.02, 0.18, 0.92, 1],
+    [0, 1, 1, 0],
+  );
+  const leadY = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.14, 0.44, 0.94, 1] : [0.06, 0.26, 0.94, 1],
+    tone === "vision" ? [26, 0, 0, -10] : [22, 0, 0, -12],
+  );
+  const leadOpacity = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.14, 0.42, 0.94, 1] : [0.06, 0.24, 0.94, 1],
+    [0, 1, 1, 0],
+  );
+  const bridgeY = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.22, 0.58, 0.96, 1] : [0.1, 0.34, 0.96, 1],
+    tone === "vision" ? [18, 0, 0, -8] : [16, 0, 0, -10],
+  );
+  const bridgeOpacity = useTransform(
+    scrollYProgress,
+    tone === "vision" ? [0.22, 0.54, 0.96, 1] : [0.1, 0.3, 0.96, 1],
+    [0, 1, 1, 0],
+  );
+  const sectionOpacitySmooth = useSpring(sectionOpacity, {
+    stiffness: 92,
+    damping: 28,
+    mass: 0.42,
+  });
+  const sectionYSmooth = useSpring(sectionY, {
+    stiffness: 84,
+    damping: 24,
+    mass: 0.46,
+  });
+  const eyebrowYSmooth = useSpring(eyebrowY, {
+    stiffness: 88,
+    damping: 26,
+    mass: 0.4,
+  });
+  const eyebrowOpacitySmooth = useSpring(eyebrowOpacity, {
+    stiffness: 100,
+    damping: 30,
+    mass: 0.36,
+  });
+  const headingYSmooth = useSpring(headingY, {
+    stiffness: 88,
+    damping: 26,
+    mass: 0.4,
+  });
+  const headingOpacitySmooth = useSpring(headingOpacity, {
+    stiffness: 100,
+    damping: 30,
+    mass: 0.36,
+  });
+  const leadYSmooth = useSpring(leadY, {
+    stiffness: 86,
+    damping: 25,
+    mass: 0.42,
+  });
+  const leadOpacitySmooth = useSpring(leadOpacity, {
+    stiffness: 98,
+    damping: 30,
+    mass: 0.38,
+  });
+  const bridgeYSmooth = useSpring(bridgeY, {
+    stiffness: 84,
+    damping: 24,
+    mass: 0.44,
+  });
+  const bridgeOpacitySmooth = useSpring(bridgeOpacity, {
+    stiffness: 96,
+    damping: 30,
+    mass: 0.38,
+  });
+  const bridgeGlow = useTransform(
+    scrollYProgress,
+    [0, 0.45, 1],
+    [0.2, 0.58, 0.24],
+  );
+  const accentClass =
+    tone === "vision"
+      ? "text-[var(--color-accent-cyan)]"
+      : "text-[var(--color-accent-violet)]";
+  const bridgeLine =
+    tone === "vision"
+      ? "Incubación real: claridad hoy, lanzamiento cuando esté listo."
+      : "Estudio técnico-creativo: criterio, ejecución y refinamiento continuo.";
+  const bridgeHeight = tone === "vision" ? "h-[90vh]" : "h-[165vh]";
+
+  return (
+    <section
+      ref={rootRef}
+      id={section.id}
+      className={`relative z-20 ${bridgeHeight}`}
+      style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+    >
+      <motion.article
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(24,24,27,0.92))]"
+        style={{ opacity: sectionOpacitySmooth, y: sectionYSmooth }}
       >
         <BgLayer index={index} />
-        <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-14 md:py-18">
-          {renderer}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute -left-20 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[var(--color-accent-cyan)]/18 blur-3xl"
+          style={{ opacity: aura }}
+        />
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 top-[36%] h-64 w-64 rounded-full bg-[var(--color-accent-violet)]/16 blur-3xl"
+          style={{ opacity: aura }}
+        />
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-6xl items-center px-5 py-14 md:py-18">
+          <motion.div>
+            <motion.p
+              className={`font-mono text-xs uppercase tracking-[0.24em] ${accentClass}`}
+              style={
+                reducedMotion
+                  ? undefined
+                  : { opacity: eyebrowOpacitySmooth, y: eyebrowYSmooth }
+              }
+            >
+              {section.eyebrow}
+            </motion.p>
+            <motion.h2
+              className="hero-glow mt-5 max-w-5xl text-display fs-d-lg font-bold"
+              style={
+                reducedMotion
+                  ? undefined
+                  : { opacity: headingOpacitySmooth, y: headingYSmooth }
+              }
+            >
+              {section.title}
+            </motion.h2>
+            <motion.p
+              className="mt-5 max-w-3xl text-[var(--color-text-secondary)]"
+              style={
+                reducedMotion
+                  ? undefined
+                  : { opacity: leadOpacitySmooth, y: leadYSmooth }
+              }
+            >
+              {section.lead}
+            </motion.p>
+            <motion.div
+              aria-hidden
+              className="mt-6 h-px w-[min(26rem,80%)] bg-gradient-to-r from-[var(--color-accent-cyan)]/55 via-white/25 to-transparent"
+              style={
+                tone === "vision"
+                  ? reducedMotion
+                    ? undefined
+                    : { opacity: bridgeGlow, y: bridgeYSmooth }
+                  : reducedMotion
+                    ? undefined
+                    : { opacity: bridgeOpacitySmooth, y: bridgeYSmooth }
+              }
+            />
+            <motion.p
+              className={`mt-3 font-mono text-xs uppercase tracking-[0.2em] ${accentClass}`}
+              style={
+                reducedMotion
+                  ? undefined
+                  : { opacity: bridgeOpacitySmooth, y: bridgeYSmooth }
+              }
+            >
+              {bridgeLine}
+            </motion.p>
+          </motion.div>
         </div>
       </motion.article>
     </section>
@@ -2539,10 +2765,20 @@ function SectionPanel({
     return <MethodPanel index={index} section={section} />;
   }
   if (section.id === "vision-producto") {
-    return <VisionPanel index={index} section={section} />;
+    return (
+      <>
+        <PitchBridgePanel index={index} section={section} tone="vision" />
+        <VisionPanel index={index} section={section} />
+      </>
+    );
   }
   if (section.id === "sobre-bhrk") {
-    return <StudioPanel index={index} section={section} />;
+    return (
+      <>
+        <PitchBridgePanel index={index} section={section} tone="studio" />
+        <StudioPanel index={index} section={section} />
+      </>
+    );
   }
 
   const renderer =

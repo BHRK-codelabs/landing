@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AnimatePresence,
   motion,
   useMotionValueEvent,
   useReducedMotion,
@@ -37,6 +38,8 @@ const scenes = [
   },
 ] as const;
 
+const INTRO_CINEMATIC_EASE = [0.22, 1, 0.36, 1] as const;
+
 export function IntroParallaxPhrase() {
   const rootRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
@@ -45,23 +48,30 @@ export function IntroParallaxPhrase() {
     offset: ["start start", "end end"],
   });
   const syncedScroll = useSpring(scrollYProgress, {
-    stiffness: 120,
+    stiffness: 52,
     damping: 24,
-    mass: 0.28,
+    mass: 0.66,
   });
 
   const activeIdxProgress = useTransform(
     syncedScroll,
-    [0, 1],
+    [0.14, 0.88],
     [0, scenes.length],
   );
   const [activeIdx, setActiveIdx] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
   useMotionValueEvent(activeIdxProgress, "change", (value) => {
     const next = Math.max(
       0,
       Math.min(scenes.length - 1, Math.floor(value + Number.EPSILON)),
     );
-    setActiveIdx(next);
+    setActiveIdx((prev) => {
+      if (prev === next) {
+        return prev;
+      }
+      setDirection(next > prev ? 1 : -1);
+      return next;
+    });
   });
 
   const bgShift = useTransform(syncedScroll, [0, 1], [-14, 24]);
@@ -69,31 +79,53 @@ export function IntroParallaxPhrase() {
   const blobAY = useTransform(syncedScroll, [0, 1], [14, -22]);
   const blobBX = useTransform(syncedScroll, [0, 1], [26, -34]);
   const blobBY = useTransform(syncedScroll, [0, 1], [-12, 20]);
-  const stageOpacity = useTransform(syncedScroll, [0, 0.08, 0.9, 1], [0.15, 1, 1, 0.1]);
-  const stageY = useTransform(syncedScroll, [0, 0.1, 1], [26, 0, -26]);
+  const stageOpacity = useTransform(
+    syncedScroll,
+    [0, 0.06, 0.9, 1],
+    [0.08, 1, 1, 0.06],
+  );
+  const stageY = useTransform(syncedScroll, [0, 0.08, 1], [34, 0, -46]);
 
   return (
     <section
       ref={rootRef}
       aria-label="Transicion hacia servicios"
-      className="relative h-[calc(100svh*3.2)]"
+      className="relative h-[calc(100svh*6.4)]"
       style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <motion.div
         className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-bg-base)]"
         style={{ opacity: stageOpacity, y: stageY }}
       >
-        <motion.div
-          aria-hidden
-          animate={{ opacity: 1 }}
-          className="pointer-events-none absolute inset-0"
-          initial={{ opacity: 0.92 }}
-          style={{
-            background: scenes[activeIdx]?.gradient,
-            y: reducedMotion ? undefined : bgShift,
-          }}
-          transition={{ duration: reducedMotion ? 0 : 0.6, ease: "easeOut" }}
-        />
+        <AnimatePresence initial={false} mode="popLayout">
+          <motion.div
+            key={`bg-${scenes[activeIdx]?.id}`}
+            aria-hidden
+            animate={{ opacity: 1, rotate: 0, scale: 1, y: 0 }}
+            className="pointer-events-none absolute inset-0"
+            exit={{
+              opacity: 0,
+              rotate: direction > 0 ? -0.2 : 0.2,
+              scale: 0.994,
+              y: direction > 0 ? -16 : 16,
+            }}
+            initial={{
+              opacity: 0,
+              rotate: direction > 0 ? 0.2 : -0.2,
+              scale: 1.006,
+              y: direction > 0 ? 18 : -18,
+            }}
+            style={{
+              background: scenes[activeIdx]?.gradient,
+              y: reducedMotion ? undefined : bgShift,
+            }}
+            transition={
+              reducedMotion
+                ? { duration: 0 }
+                : { duration: 1.1, ease: INTRO_CINEMATIC_EASE }
+            }
+          />
+        </AnimatePresence>
         <motion.div
           aria-hidden
           className="pointer-events-none absolute left-[22%] top-[34%] h-72 w-72 rounded-full bg-white/34 blur-[110px] mix-blend-screen"
@@ -124,35 +156,61 @@ export function IntroParallaxPhrase() {
 
         <div className="relative z-10 grid h-full grid-rows-[1fr_auto] px-7 pb-10 pt-12 md:px-12 md:pb-12">
           <div className="relative overflow-hidden">
-            {scenes.map((scene, idx) => (
+            <AnimatePresence initial={false} mode="popLayout">
               <motion.div
-                key={scene.id}
+                key={scenes[activeIdx]?.id}
                 animate={{
-                  opacity: idx === activeIdx ? 1 : 0,
-                  x: idx === activeIdx ? 0 : idx < activeIdx ? -36 : 36,
-                  y: idx === activeIdx ? 0 : idx < activeIdx ? -18 : 18,
-                  scale: idx === activeIdx ? 1 : 0.98,
+                  filter: "blur(0px)",
+                  opacity: 1,
+                  scale: 1,
+                  x: 0,
+                  y: 0,
                 }}
-                className={`absolute inset-0 flex flex-col justify-center ${scene.align}`}
-                transition={{ duration: reducedMotion ? 0 : 0.5, ease: "easeOut" }}
+                className={`absolute inset-0 flex flex-col justify-center ${scenes[activeIdx]?.align}`}
+                exit={{
+                  filter: "blur(5px)",
+                  opacity: 0,
+                  scale: 0.994,
+                  x: direction > 0 ? -18 : 18,
+                  y: direction > 0 ? -6 : 6,
+                }}
+                initial={{
+                  filter: "blur(8px)",
+                  opacity: 0,
+                  scale: 1.006,
+                  x: direction > 0 ? 20 : -20,
+                  y: direction > 0 ? 6 : -6,
+                }}
+                transition={
+                  reducedMotion
+                    ? { duration: 0 }
+                    : { duration: 1.05, ease: INTRO_CINEMATIC_EASE }
+                }
               >
                 <p className="mt-3 max-w-5xl text-display text-[clamp(1.65rem,3vw+0.8rem,3.9rem)] font-extrabold leading-[0.98] text-[var(--color-text-primary)]">
-                  {scene.title}
+                  {scenes[activeIdx]?.title}
                 </p>
-                <p className="mt-4 max-w-3xl font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-secondary)] md:text-xs">
-                  {scene.accent}
+                <p className="mt-4 max-w-3xl font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-text-secondary)]">
+                  {scenes[activeIdx]?.accent}
                 </p>
               </motion.div>
-            ))}
+            </AnimatePresence>
           </div>
 
           <div className="mx-auto flex w-full max-w-5xl items-center gap-2">
             {scenes.map((scene, idx) => (
               <motion.span
                 key={`step-${scene.id}`}
-                animate={{ opacity: idx === activeIdx ? 1 : 0.32 }}
-                className="h-[2px] flex-1 rounded-full bg-[var(--color-accent-cyan)]"
-                transition={{ duration: reducedMotion ? 0 : 0.35 }}
+                animate={{
+                  opacity: idx === activeIdx ? 1 : 0.28,
+                  scaleX: idx === activeIdx ? 1.06 : 1,
+                }}
+                className="h-[2px] flex-1 origin-center rounded-full bg-[var(--color-accent-cyan)]"
+                transition={
+                  reducedMotion
+                    ? { duration: 0 }
+                    : { duration: 0.8, ease: INTRO_CINEMATIC_EASE }
+                }
               />
             ))}
           </div>

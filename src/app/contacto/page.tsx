@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function ContactoPage() {
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 text-[var(--color-text-primary)]">
-      <h1 className="text-display text-4xl font-bold">Contacto</h1>
+      <h1 className="text-display fs-d-md font-bold">Contacto</h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">BHRK Codelabs</p>
       <p className="mt-2 text-[var(--color-text-secondary)]">
         Telefono: +57 302 401 2969

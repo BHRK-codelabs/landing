@@ -44,34 +44,28 @@
 
 ### Tipografía
 
+> **Ver `docs/10_DESIGN_SYSTEM_GOVERNANCE.md`** para las reglas completas de uso.  
+> Este bloque es solo referencia rápida de tokens actuales.
+
 ```css
-/* Familias */
---font-display: 'Nexa', sans-serif;      /* titulares y display */
---font-body:    'Inter', sans-serif;     /* cuerpo, UI, labels */
---font-mono:    'IBM Plex Mono', monospace; /* código, tags técnicos */
+/* Familias — cargadas vía next/font/google en layout.tsx */
+--font-display: 'Plus Jakarta Sans', sans-serif;  /* 600·700·800 — titulares */
+--font-body:    'Inter', sans-serif;               /* 400·500·600·700 — cuerpo */
+--font-mono:    'IBM Plex Mono', monospace;        /* 400·500 — etiquetas, código */
 
-/* Escala fluid (usar clamp en Tailwind o CSS directo) */
---text-5xl: clamp(3rem,    5vw + 1rem, 6rem);    /* hero H1 */
---text-4xl: clamp(2.25rem, 3.5vw + 1rem, 4rem);  /* section headline */
---text-3xl: clamp(1.75rem, 2.5vw + 0.5rem, 2.5rem);
---text-xl:  clamp(1.125rem, 1.5vw + 0.25rem, 1.375rem);
---text-base: 1rem;                               /* 16px — mínimo de cuerpo */
---text-sm:   0.875rem;
---text-xs:   0.75rem;
+/* Escala fluida — clases utility en globals.css */
+/* Uso: <h1 className="text-display fs-d-xl font-black"> */
+--fs-d-xl: clamp(2.8rem,  5vw + 0.8rem, 5.6rem);   /* 45–90px  — hero H1 */
+--fs-d-lg: clamp(2.2rem,  3.8vw + 0.6rem, 4.4rem); /* 35–70px  — titular sección */
+--fs-d-md: clamp(1.75rem, 2.6vw + 0.5rem, 3.4rem); /* 28–54px  — subtítulo sección */
+--fs-d-sm: clamp(1.35rem, 1.8vw + 0.4rem, 2.4rem); /* 22–38px  — titular bloque */
+--fs-d-xs: clamp(1.05rem, 1.2vw + 0.3rem, 1.75rem);/* 17–28px  — etiqueta destacada */
 
-/* Pesos */
---font-light:   300;  /* subtítulos secundarios */
---font-regular: 400;  /* cuerpo */
---font-medium:  500;  /* labels, navegación */
---font-semibold:600;  /* subtítulos de sección */
---font-bold:    700;  /* headlines */
---font-black:   900;  /* hero H1 — Nexa Black */
-
-/* Interlineado */
---leading-tight:   1.15;  /* titulares grandes */
---leading-snug:    1.35;  /* subtítulos */
---leading-normal:  1.6;   /* cuerpo */
---leading-relaxed: 1.75;  /* texto largo */
+/* Interlineado — solo 4 valores aprobados */
+line-height: 0.95   /* titulares XL (incluido en fs-d-xl) */
+line-height: 1.08   /* titulares M  (incluido en fs-d-md) */
+line-height: 1.65   /* cuerpo de párrafo (default en body) */
+line-height: 1.7    /* cuerpo en secciones oscuras */
 ```
 
 ### Espaciado base (8pt grid)

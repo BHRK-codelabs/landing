@@ -64,7 +64,7 @@ export function HeroSequence() {
           <motion.h1
             key="headline"
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-5xl text-display text-[clamp(2.5rem,4.6vw+1rem,5.6rem)] font-black leading-[1.03]"
+            className="max-w-5xl text-display fs-d-xl font-black"
             exit={{ opacity: 0, y: -24 }}
             initial={{ opacity: 0, y: 22 }}
             transition={{ duration: 0.45, ease: "easeOut" }}
@@ -104,7 +104,7 @@ export function HeroSequence() {
             initial={{ opacity: 0, y: 18 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
-            <p className="text-display text-[clamp(2.5rem,4.6vw+1rem,5.6rem)] font-black leading-[1.03]">
+            <p className="text-display fs-d-xl font-black">
               Conversemos primero la ruta técnica y de permisos.
             </p>
             <motion.p

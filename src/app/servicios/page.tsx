@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function ServiciosPage() {
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 text-[var(--color-text-primary)]">
-      <h1 className="text-display text-4xl font-bold">Servicios</h1>
+      <h1 className="text-display fs-d-md font-bold">Servicios</h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">
         Ayudamos a empresas a diseñar, construir y escalar soluciones de
         software con claridad técnica y foco en operación.

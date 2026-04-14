@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function TerminosYCondicionesPage() {
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 text-[var(--color-text-primary)]">
-      <h1 className="text-display text-4xl font-bold">
+      <h1 className="text-display fs-d-md font-bold">
         Términos y condiciones
       </h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">

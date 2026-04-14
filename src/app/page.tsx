@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { BrandParallax } from "@/components/landing/brand-parallax";
 import { HeroSequence } from "@/components/landing/hero-sequence";
 import { IntroParallaxPhrase } from "@/components/landing/intro-parallax-phrase";
+import { MainScrollSpyNavbar } from "@/components/landing/main-scrollspy-navbar";
 import { StackedParallaxSections } from "@/components/landing/stacked-parallax-sections";
 import { TypewriterBadge } from "@/components/landing/typewriter-badge";
 import { FadeIn } from "@/components/motion/fade-in";
@@ -13,6 +13,16 @@ const heroTickerItems = [
   "Automatización",
   "Integraciones",
   "Canales conversacionales",
+];
+
+const sectionSpyItems = [
+  { id: "inicio", label: "Inicio" },
+  { id: "servicios", label: "Servicios" },
+  { id: "metodo", label: "Metodo" },
+  { id: "vision-producto", label: "Vision" },
+  { id: "sobre-bhrk", label: "Estudio" },
+  { id: "info-verificada", label: "Confianza" },
+  { id: "contacto", label: "Contacto" },
 ];
 
 const stackedSections = [
@@ -208,60 +218,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-[var(--color-bg-base)] text-[var(--color-text-primary)]">
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
 
-      <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[rgb(13_13_15_/_0.86)] backdrop-blur">
-        <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4">
-          <a className="group flex items-center gap-3" href="#inicio">
-            <Image
-              alt="BHRK Codelabs"
-              className="h-9 w-auto opacity-90 transition duration-300 group-hover:opacity-100"
-              height={48}
-              priority
-              src="/brand/bhrk-logo-primary.png"
-              width={198}
-            />
-          </a>
-          <div className="hidden items-center gap-6 text-sm text-[var(--color-text-secondary)] md:flex">
-            <a
-              className="transition hover:text-[var(--color-text-primary)]"
-              href="#servicios"
-            >
-              Servicios
-            </a>
-            <a
-              className="transition hover:text-[var(--color-text-primary)]"
-              href="#metodo"
-            >
-              Cómo trabajamos
-            </a>
-            <a
-              className="transition hover:text-[var(--color-text-primary)]"
-              href="#vision-producto"
-            >
-              Visión de producto
-            </a>
-            <a
-              className="transition hover:text-[var(--color-text-primary)]"
-              href="#sobre-bhrk"
-            >
-              Estudio
-            </a>
-            <a
-              className="transition hover:text-[var(--color-text-primary)]"
-              href="#info-verificada"
-            >
-              Confianza
-            </a>
-            <a
-              className="transition hover:text-[var(--color-text-primary)]"
-              href="#contacto"
-            >
-              Contacto
-            </a>
-          </div>
-        </nav>
+      <header className="sticky top-0 z-50">
+        <MainScrollSpyNavbar items={sectionSpyItems} />
       </header>
 
-      <main className="snap-y snap-proximity overscroll-y-contain md:snap-none">
+      <main className="snap-y snap-proximity overscroll-y-contain pb-20 md:snap-none md:pb-0">
         <section
           id="inicio"
           className="section-shell relative overflow-hidden px-5 pb-24 pt-24 md:pb-32 md:pt-32"
@@ -315,7 +276,7 @@ export default function HomePage() {
               <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
                 Contacto directo
               </p>
-              <h2 className="mt-4 text-display text-[clamp(2rem,3vw+0.8rem,3.4rem)] font-bold leading-[1.08]">
+              <h2 className="mt-4 text-display fs-d-md font-bold">
                 Tienes una idea o una operación que necesita{" "}
                 <span className="hero-glow inline-block">orden</span>.
               </h2>
