@@ -25,7 +25,7 @@ import {
   ShoppingCart,
   UserRoundCog,
 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { type ReactNode, useMemo, useRef, useState } from "react";
 
 type NarrativeBeat = {
   title: string;
@@ -466,13 +466,21 @@ function ServicesPanel({
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const fadeOut = useTransform(
+  const sectionOpacity = useTransform(
     scrollYProgress,
-    [0, 0.78, 0.94, 1],
-    [1, 1, 0.68, 0],
+    [0, 0.08, 0.82, 0.94, 1],
+    [0.15, 1, 1, 0.65, 0],
   );
-  const liftOut = useTransform(scrollYProgress, [0, 0.84, 1], [0, -24, -76]);
-  const scaleOut = useTransform(scrollYProgress, [0, 0.84, 1], [1, 1, 0.955]);
+  const sectionY = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.84, 1],
+    [36, 0, 0, -76],
+  );
+  const sectionScale = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.84, 1],
+    [0.985, 1, 1, 0.955],
+  );
 
   useMotionValueEvent(mapped, "change", (v) => {
     const rounded = Math.round(v);
@@ -494,7 +502,7 @@ function ServicesPanel({
     >
       <motion.article
         className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(162deg,rgba(17,17,19,0.99),rgba(24,24,27,0.92))]"
-        style={{ opacity: fadeOut, scale: scaleOut, y: liftOut }}
+        style={{ opacity: sectionOpacity, scale: sectionScale, y: sectionY }}
       >
         <BgLayer index={index} />
         <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-12 md:py-14">
@@ -626,8 +634,12 @@ function MethodPanel({
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const fadeOut = useTransform(scrollYProgress, [0, 0.85, 1], [1, 1, 0.06]);
-  const liftOut = useTransform(scrollYProgress, [0, 1], [0, -56]);
+  const sectionOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.84, 1],
+    [0.15, 1, 1, 0.06],
+  );
+  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [34, 0, -56]);
 
   useMotionValueEvent(mapped, "change", (v) => {
     const rounded = Math.round(v);
@@ -649,7 +661,7 @@ function MethodPanel({
     >
       <motion.article
         className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(23,23,31,0.94))]"
-        style={{ opacity: fadeOut, y: liftOut }}
+        style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} morphIndex={active} />
         <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-12 md:py-14">
@@ -896,7 +908,12 @@ function VisionPanel({
     [0, Math.max(0, section.beats.length - 1)],
   );
   const [active, setActive] = useState(0);
-  const fadeOut = useTransform(scrollYProgress, [0, 0.88, 1], [1, 1, 0.05]);
+  const sectionOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.86, 1],
+    [0.15, 1, 1, 0.05],
+  );
+  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -48]);
 
   useMotionValueEvent(mapped, "change", (v) => {
     const rounded = Math.round(v);
@@ -911,7 +928,7 @@ function VisionPanel({
     >
       <motion.article
         className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(155deg,rgba(13,13,15,0.99),rgba(21,20,27,0.94))]"
-        style={{ opacity: fadeOut }}
+        style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} />
         <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-12 md:py-14">
@@ -2217,7 +2234,12 @@ function StudioPanel({
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const fadeOut = useTransform(scrollYProgress, [0, 0.86, 1], [1, 1, 0.08]);
+  const sectionOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.84, 1],
+    [0.15, 1, 1, 0.08],
+  );
+  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -42]);
 
   useMotionValueEvent(mapped, "change", (v) => {
     const rounded = Math.round(v);
@@ -2239,7 +2261,7 @@ function StudioPanel({
     >
       <motion.article
         className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(158deg,rgba(13,13,15,0.99),rgba(23,22,30,0.94))]"
-        style={{ opacity: fadeOut }}
+        style={{ opacity: sectionOpacity, y: sectionY }}
       >
         <BgLayer index={index} />
         <div className="relative z-10 mx-auto h-full w-full max-w-[95vw] px-4 py-12 md:px-6 md:py-14">
@@ -2452,6 +2474,42 @@ function LedgerView({ section }: { section: NarrativeSection }) {
   );
 }
 
+function GenericNarrativePanel({
+  section,
+  index,
+  renderer,
+}: {
+  section: NarrativeSection;
+  index: number;
+  renderer: ReactNode;
+}) {
+  const rootRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: rootRef,
+    offset: ["start start", "end end"],
+  });
+  const sectionOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.84, 1],
+    [0.15, 1, 1, 0.08],
+  );
+  const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [24, 0, -36]);
+
+  return (
+    <section ref={rootRef} id={section.id} className="relative h-[185vh]">
+      <motion.article
+        className="sticky top-16 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]"
+        style={{ opacity: sectionOpacity, y: sectionY }}
+      >
+        <BgLayer index={index} />
+        <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-14 md:py-18">
+          {renderer}
+        </div>
+      </motion.article>
+    </section>
+  );
+}
+
 function SectionPanel({
   section,
   index,
@@ -2480,14 +2538,7 @@ function SectionPanel({
     );
 
   return (
-    <section id={section.id} className="relative h-[185vh]">
-      <article className="sticky top-16 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]">
-        <BgLayer index={index} />
-        <div className="relative z-10 mx-auto h-full w-full max-w-6xl px-5 py-14 md:py-18">
-          {renderer}
-        </div>
-      </article>
-    </section>
+    <GenericNarrativePanel index={index} renderer={renderer} section={section} />
   );
 }
 

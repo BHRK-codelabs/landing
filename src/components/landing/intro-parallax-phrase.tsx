@@ -16,7 +16,7 @@ const scenes = [
     accent: "Necesita direccion y ejecucion.",
     align: "items-start text-left",
     gradient:
-      "radial-gradient(ellipse_at_18%_30%,rgba(0,212,255,0.18),transparent_54%),radial-gradient(ellipse_at_78%_72%,rgba(124,58,237,0.1),transparent_48%),linear-gradient(180deg,rgba(13,13,15,0.95),rgba(13,13,15,1))",
+      "radial-gradient(ellipse at 30% 46%, rgba(56,240,255,0.55), transparent 54%), radial-gradient(ellipse at 64% 30%, rgba(27,39,255,0.5), transparent 52%), radial-gradient(ellipse at 74% 74%, rgba(255,0,144,0.4), transparent 50%), radial-gradient(ellipse at 98% 52%, rgba(255,149,0,0.34), transparent 44%), linear-gradient(180deg, rgba(8,10,18,0.86), rgba(8,10,18,0.94))",
   },
   {
     id: "scene-02",
@@ -24,7 +24,7 @@ const scenes = [
     accent: "Sin humo. Sin vueltas.",
     align: "items-center text-center",
     gradient:
-      "radial-gradient(ellipse_at_50%_34%,rgba(217,225,32,0.14),transparent_52%),radial-gradient(ellipse_at_74%_68%,rgba(0,212,255,0.12),transparent_48%),linear-gradient(180deg,rgba(13,13,15,0.95),rgba(13,13,15,1))",
+      "radial-gradient(ellipse at 46% 58%, rgba(0,230,255,0.54), transparent 56%), radial-gradient(ellipse at 68% 40%, rgba(53,206,255,0.44), transparent 52%), radial-gradient(ellipse at 84% 34%, rgba(255,184,48,0.42), transparent 46%), radial-gradient(ellipse at 16% 22%, rgba(255,154,0,0.32), transparent 44%), linear-gradient(180deg, rgba(10,16,24,0.84), rgba(10,16,24,0.92))",
   },
   {
     id: "scene-03",
@@ -32,7 +32,7 @@ const scenes = [
     accent: "Servicios listos para mover resultados.",
     align: "items-end text-right",
     gradient:
-      "radial-gradient(ellipse_at_24%_70%,rgba(255,149,0,0.16),transparent_52%),radial-gradient(ellipse_at_82%_32%,rgba(0,212,255,0.14),transparent_48%),linear-gradient(180deg,rgba(13,13,15,0.95),rgba(13,13,15,1))",
+      "radial-gradient(ellipse at 40% 42%, rgba(32,255,42,0.52), transparent 56%), radial-gradient(ellipse at 26% 62%, rgba(229,255,84,0.42), transparent 52%), radial-gradient(ellipse at 18% 80%, rgba(255,170,52,0.34), transparent 46%), radial-gradient(ellipse at 94% 82%, rgba(0,110,255,0.34), transparent 42%), linear-gradient(180deg, rgba(8,20,14,0.84), rgba(8,20,14,0.92))",
   },
 ] as const;
 
@@ -56,8 +56,10 @@ export function IntroParallaxPhrase() {
   });
 
   const bgShift = useTransform(scrollYProgress, [0, 1], [-14, 24]);
-  const haloX = useTransform(scrollYProgress, [0, 1], [-50, 70]);
-  const haloY = useTransform(scrollYProgress, [0, 1], [24, -34]);
+  const blobAX = useTransform(scrollYProgress, [0, 1], [-30, 36]);
+  const blobAY = useTransform(scrollYProgress, [0, 1], [14, -22]);
+  const blobBX = useTransform(scrollYProgress, [0, 1], [26, -34]);
+  const blobBY = useTransform(scrollYProgress, [0, 1], [-12, 20]);
 
   return (
     <section
@@ -70,17 +72,39 @@ export function IntroParallaxPhrase() {
           aria-hidden
           animate={{ opacity: 1 }}
           className="pointer-events-none absolute inset-0"
-          initial={{ opacity: 0.84 }}
+          initial={{ opacity: 0.92 }}
           style={{
             background: scenes[activeIdx]?.gradient,
             y: reducedMotion ? undefined : bgShift,
           }}
-          transition={{ duration: reducedMotion ? 0 : 0.5, ease: "easeOut" }}
+          transition={{ duration: reducedMotion ? 0 : 0.6, ease: "easeOut" }}
         />
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--color-accent-cyan)]/30 blur-[1px]"
-          style={reducedMotion ? undefined : { x: haloX, y: haloY }}
+          className="pointer-events-none absolute left-[22%] top-[34%] h-72 w-72 rounded-full bg-white/34 blur-[110px] mix-blend-screen"
+          style={reducedMotion ? undefined : { x: blobAX, y: blobAY }}
+        />
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute right-[14%] top-[56%] h-64 w-64 rounded-full bg-white/28 blur-[120px] mix-blend-screen"
+          style={reducedMotion ? undefined : { x: blobBX, y: blobBY }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 50%, transparent 24%, rgba(6,7,10,0.2) 76%, rgba(2,3,5,0.4) 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "repeating-radial-gradient(circle at 20% 20%, rgba(255,255,255,0.22) 0 1px, transparent 1px 3px)",
+            backgroundSize: "3px 3px",
+          }}
         />
 
         <div className="relative z-10 grid h-full grid-rows-[1fr_auto] px-7 pb-10 pt-12 md:px-12 md:pb-12">
