@@ -145,7 +145,7 @@ export default function ProductDetailPage({
         </p>
         <a
           className="mt-5 inline-flex rounded-full bg-[var(--color-accent-cyan)] px-5 py-2.5 text-sm font-semibold text-[var(--color-bg-base)] transition hover:brightness-110"
-          href={`mailto:hola.bhrkcodelabs@gmail.com?subject=Interes%20en%20demo%20beta%20-%20${encodeURIComponent(product.name)}&body=Hola%20BHRK%2C%20quiero%20agendar%20demo%20cuando%20haya%20beta%20de%20${encodeURIComponent(product.name)}.`}
+          href={`mailto:hola.bhrkcodelabs@gmail.com?subject=Interés%20en%20demo%20beta%20-%20${encodeURIComponent(product.name)}&body=Hola%20BHRK%2C%20quiero%20agendar%20demo%20cuando%20haya%20beta%20de%20${encodeURIComponent(product.name)}.`}
         >
           Solicitar demo beta
         </a>

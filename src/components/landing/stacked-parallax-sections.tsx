@@ -183,13 +183,13 @@ function ServicesView({
       icon: GitBranch,
       color: "#FF9500",
       path: "M0 410 C 230 330, 430 460, 640 390 C 850 330, 980 450, 1200 390",
-      label: "Conexion operativa",
+      label: "Conexión operativa",
     },
     {
       icon: MessageSquareText,
       color: "#7C3AED",
       path: "M0 510 C 240 450, 430 560, 640 510 C 850 450, 980 570, 1200 500",
-      label: "Interaccion y soporte",
+      label: "Interacción y soporte",
     },
     {
       icon: UserRoundCog,
@@ -206,9 +206,9 @@ function ServicesView({
   ] as const;
 
   const narrative = [
-    "Diagnostico y criterio antes de mover presupuesto.",
+    "Diagnóstico y criterio antes de mover presupuesto.",
     "Arquitectura para crecer sin romper continuidad.",
-    "Flujos conectados para operar con menos friccion.",
+    "Flujos conectados para operar con menos fricción.",
     "Conversaciones útiles para soporte y operación.",
     "Capacidad técnica que entra y suma desde el día uno.",
     "Experiencias sobrias que se entienden y rinden.",
@@ -774,7 +774,7 @@ function VisionView({
           </span>
         </div>
         <h3 className="typo-title-block mt-3 max-w-3xl">
-          Estos son los productos que estamos trabajando y queremos que pronto los veas.
+          Estos son los productos que estamos desarrollando y que pronto podrás conocer.
         </h3>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--color-text-secondary)]">
           Priorizamos líneas con impacto directo en ingresos, continuidad operativa
@@ -882,7 +882,7 @@ function VisionView({
                   Línea 0{idx + 1}
                 </p>
                 <span className="rounded-full border border-white/18 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/65">
-                  Muy pronto 🎄
+                  Muy pronto
                 </span>
               </div>
               <p
