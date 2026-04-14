@@ -2311,7 +2311,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
   );
   const mailtoHref = useMemo(
     () =>
-      `mailto:hola@bhrkcodelabs.com?subject=${encodeURIComponent("Solicitud de llamada desde sitio web")}&body=${encodeURIComponent(contactPayload)}`,
+      `mailto:hola.bhrkcodelabs@gmail.com?subject=${encodeURIComponent("Solicitud de llamada desde sitio web")}&body=${encodeURIComponent(contactPayload)}`,
     [contactPayload],
   );
 

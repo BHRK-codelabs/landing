@@ -35,8 +35,32 @@ export const metadata: Metadata = {
   },
   description:
     "Consultoría tecnológica, desarrollo a medida, automatización e integraciones para empresas que necesitan operar con más claridad y control.",
+  keywords: [
+    "consultoría tecnológica",
+    "desarrollo de software a medida",
+    "automatización",
+    "integraciones",
+    "chatbots",
+    "staff augmentation",
+    "experiencias web",
+    "BHRK Codelabs",
+    "Colombia",
+  ],
+  authors: [{ name: "Néstor Villar Lautero" }],
+  creator: "BHRK Codelabs",
   alternates: {
     canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
   },
   openGraph: {
     title: "BHRK Codelabs | Consultoría y desarrollo de software",
@@ -52,6 +76,7 @@ export const metadata: Metadata = {
     title: "BHRK Codelabs | Consultoría y desarrollo de software",
     description:
       "Consultoría tecnológica, desarrollo a medida, automatización e integraciones para empresas que necesitan operar con más claridad y control.",
+    creator: "@bhrkcodelabs",
   },
 };
 
@@ -62,7 +87,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.variable} ${jakartaSans.variable} ${ibmPlexMono.variable} antialiased`}>
+      <body
+        className={`${inter.variable} ${jakartaSans.variable} ${ibmPlexMono.variable} antialiased`}
+      >
         {children}
       </body>
     </html>

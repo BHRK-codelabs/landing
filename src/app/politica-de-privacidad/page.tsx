@@ -19,7 +19,7 @@ export default function PoliticaDePrivacidadPage() {
       </p>
       <p className="mt-4 text-[var(--color-text-secondary)]">
         Para solicitudes relacionadas con datos personales, escribir a:
-        hola@bhrkcodelabs.com.
+        hola.bhrkcodelabs@gmail.com.
       </p>
     </main>
   );

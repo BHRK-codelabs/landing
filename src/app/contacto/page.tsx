@@ -19,7 +19,7 @@ export default function ContactoPage() {
         Dirección: Calle 37A 9-47 Ibagué, Tolima. Colombia
       </p>
       <p className="mt-2 text-[var(--color-text-secondary)]">
-        Correo: hola@bhrkcodelabs.com
+        Correo: hola.bhrkcodelabs@gmail.com
       </p>
       <p className="mt-2 text-[var(--color-text-secondary)]">Ubicación: Colombia</p>
     </main>

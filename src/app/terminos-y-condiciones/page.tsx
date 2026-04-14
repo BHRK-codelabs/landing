@@ -18,7 +18,7 @@ export default function TerminosYCondicionesPage() {
         tiene fines informativos sobre servicios actuales de BHRK Codelabs.
       </p>
       <p className="mt-4 text-[var(--color-text-secondary)]">
-        Para consultas legales o comerciales, escribir a: hola@bhrkcodelabs.com.
+        Para consultas legales o comerciales, escribir a: hola.bhrkcodelabs@gmail.com.
       </p>
     </main>
   );

@@ -83,7 +83,7 @@ export default function ProductosPage() {
         </p>
         <a
           className="mt-5 inline-flex rounded-full bg-[var(--color-accent-cyan)] px-5 py-2.5 text-sm font-semibold text-[var(--color-bg-base)] transition hover:brightness-110"
-          href="mailto:hola@bhrkcodelabs.com?subject=Interes%20en%20demo%20beta&body=Hola%20BHRK%2C%20quiero%20agendar%20demo%20cuando%20haya%20beta%20disponible."
+          href="mailto:hola.bhrkcodelabs@gmail.com?subject=Interes%20en%20demo%20beta&body=Hola%20BHRK%2C%20quiero%20agendar%20demo%20cuando%20haya%20beta%20disponible."
         >
           Solicitar demo beta
         </a>

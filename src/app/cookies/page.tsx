@@ -16,7 +16,7 @@ export default function CookiesPage() {
         rendimiento, seguridad y experiencia de uso.
       </p>
       <p className="mt-4 text-[var(--color-text-secondary)]">
-        Para más información, escribir a: hola@bhrkcodelabs.com.
+        Para más información, escribir a: hola.bhrkcodelabs@gmail.com.
       </p>
     </main>
   );

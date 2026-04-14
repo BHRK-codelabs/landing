@@ -167,7 +167,7 @@ const stackedSections = [
       { title: "Nombre de negocio", description: "BHRK Codelabs." },
       {
         title: "Contacto comercial",
-        description: "+57 302 401 2969 · hola@bhrkcodelabs.com.",
+        description: "+57 302 401 2969 · hola.bhrkcodelabs@gmail.com.",
       },
       {
         title: "Dirección",
@@ -202,15 +202,36 @@ export default function HomePage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "ProfessionalService",
     name: "BHRK Codelabs",
     url: "https://bhrkcodelabs.io",
-    email: "hola@bhrkcodelabs.com",
-    telephone: "+57 302 4012969",
+    email: "hola.bhrkcodelabs@gmail.com",
+    telephone: "+573024012969",
+    founder: {
+      "@type": "Person",
+      name: "Néstor Villar Lautero",
+    },
     address: {
       "@type": "PostalAddress",
+      streetAddress: "Calle 37A 9-47",
+      addressLocality: "Ibagué",
+      addressRegion: "Tolima",
       addressCountry: "CO",
-      addressLocality: "Colombia",
+    },
+    areaServed: ["CO", "LATAM"],
+    knowsAbout: [
+      "Consultoría tecnológica",
+      "Desarrollo de software a medida",
+      "Automatización e integraciones",
+      "Chatbots y canales conversacionales",
+      "Staff augmentation",
+      "Experiencias web y producto digital",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+573024012969",
+      contactType: "customer service",
+      availableLanguage: "Spanish",
     },
   };
 
@@ -287,7 +308,7 @@ export default function HomePage() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
                   className="inline-flex rounded-full bg-[var(--color-accent-cyan)] px-6 py-3 text-sm font-semibold text-[var(--color-bg-base)] transition hover:scale-[1.02]"
-                  href="mailto:hola@bhrkcodelabs.com"
+                  href="mailto:hola.bhrkcodelabs@gmail.com"
                 >
                   Escribir por correo
                 </a>
@@ -307,7 +328,6 @@ export default function HomePage() {
         ) : null}
       </main>
 
-
       <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg-base)] px-5 py-10">
         <div className="mx-auto grid w-full max-w-6xl gap-8 text-sm text-[var(--color-text-secondary)] md:grid-cols-[1.2fr_1fr] md:items-end">
           <div>
@@ -317,19 +337,27 @@ export default function HomePage() {
             </p>
             <div className="mt-4 space-y-1.5 text-xs leading-6 text-[var(--color-text-muted)] md:text-sm">
               <p>
-                <span className="text-[var(--color-text-secondary)]">Dirección:</span>{" "}
+                <span className="text-[var(--color-text-secondary)]">
+                  Dirección:
+                </span>{" "}
                 Calle 37A 9-47 Ibagué, Tolima. Colombia
               </p>
               <p>
-                <span className="text-[var(--color-text-secondary)]">Teléfono:</span>{" "}
+                <span className="text-[var(--color-text-secondary)]">
+                  Teléfono:
+                </span>{" "}
                 +57 302 401 2969
               </p>
               <p>
-                <span className="text-[var(--color-text-secondary)]">Correo:</span>{" "}
-                hola@bhrkcodelabs.com
+                <span className="text-[var(--color-text-secondary)]">
+                  Correo:
+                </span>{" "}
+                hola.bhrkcodelabs@gmail.com
               </p>
               <p>
-                <span className="text-[var(--color-text-secondary)]">Cobertura:</span>{" "}
+                <span className="text-[var(--color-text-secondary)]">
+                  Cobertura:
+                </span>{" "}
                 Colombia y LATAM
               </p>
             </div>
