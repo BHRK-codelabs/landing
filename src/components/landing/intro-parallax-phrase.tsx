@@ -5,6 +5,7 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
 } from "framer-motion";
 import { useRef, useState } from "react";
@@ -43,31 +44,45 @@ export function IntroParallaxPhrase() {
     target: rootRef,
     offset: ["start start", "end end"],
   });
+  const syncedScroll = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 24,
+    mass: 0.28,
+  });
 
   const activeIdxProgress = useTransform(
-    scrollYProgress,
+    syncedScroll,
     [0, 1],
-    [0, scenes.length - 1],
+    [0, scenes.length],
   );
   const [activeIdx, setActiveIdx] = useState(0);
   useMotionValueEvent(activeIdxProgress, "change", (value) => {
-    const next = Math.max(0, Math.min(scenes.length - 1, Math.round(value)));
+    const next = Math.max(
+      0,
+      Math.min(scenes.length - 1, Math.floor(value + Number.EPSILON)),
+    );
     setActiveIdx(next);
   });
 
-  const bgShift = useTransform(scrollYProgress, [0, 1], [-14, 24]);
-  const blobAX = useTransform(scrollYProgress, [0, 1], [-30, 36]);
-  const blobAY = useTransform(scrollYProgress, [0, 1], [14, -22]);
-  const blobBX = useTransform(scrollYProgress, [0, 1], [26, -34]);
-  const blobBY = useTransform(scrollYProgress, [0, 1], [-12, 20]);
+  const bgShift = useTransform(syncedScroll, [0, 1], [-14, 24]);
+  const blobAX = useTransform(syncedScroll, [0, 1], [-30, 36]);
+  const blobAY = useTransform(syncedScroll, [0, 1], [14, -22]);
+  const blobBX = useTransform(syncedScroll, [0, 1], [26, -34]);
+  const blobBY = useTransform(syncedScroll, [0, 1], [-12, 20]);
+  const stageOpacity = useTransform(syncedScroll, [0, 0.08, 0.9, 1], [0.15, 1, 1, 0.1]);
+  const stageY = useTransform(syncedScroll, [0, 0.1, 1], [26, 0, -26]);
 
   return (
     <section
       ref={rootRef}
       aria-label="Transicion hacia servicios"
       className="relative h-[calc(100svh*3.2)]"
+      style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
-      <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-bg-base)]">
+      <motion.div
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-bg-base)]"
+        style={{ opacity: stageOpacity, y: stageY }}
+      >
         <motion.div
           aria-hidden
           animate={{ opacity: 1 }}
@@ -142,7 +157,7 @@ export function IntroParallaxPhrase() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

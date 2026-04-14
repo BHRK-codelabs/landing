@@ -462,7 +462,7 @@ function ServicesPanel({
   const mapped = useTransform(
     scrollYProgress,
     [0.06, 0.92],
-    [0, Math.max(0, section.beats.length - 1)],
+    [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -483,8 +483,10 @@ function ServicesPanel({
   );
 
   useMotionValueEvent(mapped, "change", (v) => {
-    const rounded = Math.round(v);
-    const next = Math.max(0, Math.min(section.beats.length - 1, rounded));
+    const next = Math.max(
+      0,
+      Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
+    );
     setActive((prev) => {
       if (prev === next) {
         return prev;
@@ -630,7 +632,7 @@ function MethodPanel({
   const mapped = useTransform(
     scrollYProgress,
     [0.08, 0.92],
-    [0, Math.max(0, section.beats.length - 1)],
+    [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -642,8 +644,10 @@ function MethodPanel({
   const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [34, 0, -56]);
 
   useMotionValueEvent(mapped, "change", (v) => {
-    const rounded = Math.round(v);
-    const next = Math.max(0, Math.min(section.beats.length - 1, rounded));
+    const next = Math.max(
+      0,
+      Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
+    );
     setActive((prev) => {
       if (prev === next) {
         return prev;
@@ -905,7 +909,7 @@ function VisionPanel({
   const mapped = useTransform(
     scrollYProgress,
     [0.08, 0.92],
-    [0, Math.max(0, section.beats.length - 1)],
+    [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const sectionOpacity = useTransform(
@@ -916,8 +920,12 @@ function VisionPanel({
   const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -48]);
 
   useMotionValueEvent(mapped, "change", (v) => {
-    const rounded = Math.round(v);
-    setActive(Math.max(0, Math.min(section.beats.length - 1, rounded)));
+    setActive(
+      Math.max(
+        0,
+        Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
+      ),
+    );
   });
 
   return (
@@ -2230,7 +2238,7 @@ function StudioPanel({
   const mapped = useTransform(
     scrollYProgress,
     [0.08, 0.92],
-    [0, Math.max(0, section.beats.length - 1)],
+    [0, section.beats.length],
   );
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -2242,8 +2250,10 @@ function StudioPanel({
   const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [30, 0, -42]);
 
   useMotionValueEvent(mapped, "change", (v) => {
-    const rounded = Math.round(v);
-    const next = Math.max(0, Math.min(section.beats.length - 1, rounded));
+    const next = Math.max(
+      0,
+      Math.min(section.beats.length - 1, Math.floor(v + Number.EPSILON)),
+    );
     setActive((prev) => {
       if (prev === next) {
         return prev;
@@ -2496,7 +2506,12 @@ function GenericNarrativePanel({
   const sectionY = useTransform(scrollYProgress, [0, 0.08, 1], [24, 0, -36]);
 
   return (
-    <section ref={rootRef} id={section.id} className="relative h-[185vh]">
+    <section
+      ref={rootRef}
+      id={section.id}
+      className="relative h-[185vh]"
+      style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+    >
       <motion.article
         className="sticky top-16 h-[100svh] overflow-hidden border-y border-[var(--color-border)] bg-[linear-gradient(160deg,rgba(17,17,19,0.99),rgba(24,24,27,0.9))]"
         style={{ opacity: sectionOpacity, y: sectionY }}

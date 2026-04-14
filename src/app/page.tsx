@@ -261,10 +261,11 @@ export default function HomePage() {
         </nav>
       </header>
 
-      <main>
+      <main className="snap-y snap-proximity overscroll-y-contain md:snap-none">
         <section
           id="inicio"
           className="section-shell relative overflow-hidden px-5 pb-24 pt-24 md:pb-32 md:pt-32"
+          style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         >
           <BrandParallax />
           <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-10">
@@ -306,6 +307,7 @@ export default function HomePage() {
         <section
           id="contacto"
           className="section-shell relative overflow-hidden bg-[var(--color-bg-surface)] px-5 py-24"
+          style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
         >
           <BrandParallax />
           <div className="relative z-10 mx-auto w-full max-w-6xl">
