@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BrandParallax } from "@/components/landing/brand-parallax";
 import { HeroSequence } from "@/components/landing/hero-sequence";
+import { IntroParallaxPhrase } from "@/components/landing/intro-parallax-phrase";
 import { StackedParallaxSections } from "@/components/landing/stacked-parallax-sections";
 import { TypewriterBadge } from "@/components/landing/typewriter-badge";
 import { FadeIn } from "@/components/motion/fade-in";
@@ -149,12 +150,11 @@ const stackedSections = [
   },
   {
     id: "info-verificada",
-    eyebrow: "Información verificada",
-    title: "Datos reales de negocio para confianza, contacto y validación.",
-    lead: "Esta capa asegura legitimidad con identidad, responsable y contacto directo visibles.",
+    eyebrow: "Confianza para empezar",
+    title: "Sabes quiénes somos y cómo contactarnos hoy.",
+    lead: "Datos claros, respuesta humana y un canal directo para avanzar.",
     beats: [
       { title: "Nombre de negocio", description: "BHRK Codelabs." },
-      { title: "Responsable", description: "Néstor Villar Lautero." },
       {
         title: "Contacto comercial",
         description: "+57 302 401 2969 · hola@bhrkcodelabs.com.",
@@ -183,6 +183,13 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
+  const mainSections = stackedSections.filter(
+    (section) => section.id !== "info-verificada",
+  );
+  const trustSection = stackedSections.find(
+    (section) => section.id === "info-verificada",
+  );
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -190,7 +197,6 @@ export default function HomePage() {
     url: "https://bhrkcodelabs.io",
     email: "hola@bhrkcodelabs.com",
     telephone: "+57 302 4012969",
-    founder: "Néstor Villar Lautero",
     address: {
       "@type": "PostalAddress",
       addressCountry: "CO",
@@ -243,7 +249,7 @@ export default function HomePage() {
               className="transition hover:text-[var(--color-text-primary)]"
               href="#info-verificada"
             >
-              Información verificada
+              Confianza
             </a>
             <a
               className="transition hover:text-[var(--color-text-primary)]"
@@ -293,7 +299,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        <StackedParallaxSections sections={stackedSections} />
+        <IntroParallaxPhrase />
+
+        <StackedParallaxSections sections={mainSections} />
 
         <section
           id="contacto"
@@ -330,6 +338,10 @@ export default function HomePage() {
             </FadeIn>
           </div>
         </section>
+
+        {trustSection ? (
+          <StackedParallaxSections sections={[trustSection]} />
+        ) : null}
       </main>
 
       <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg-base)] px-5 py-10">

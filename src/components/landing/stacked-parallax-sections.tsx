@@ -20,6 +20,8 @@ import {
   GitBranch,
   MessageSquareText,
   Orbit,
+  RefreshCw,
+  ScanLine,
   ShoppingCart,
   UserRoundCog,
 } from "lucide-react";
@@ -240,55 +242,57 @@ function ServicesView({
         <rect fill="url(#service-grid)" height="760" width="1200" />
       </motion.svg>
 
-      <svg
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-45"
-        focusable="false"
-        preserveAspectRatio="none"
-        viewBox="0 0 1200 760"
-      >
-        {visualMeta.map((item, idx) => (
+      <div className="pointer-events-none absolute inset-y-0 left-1/2 h-full w-screen -translate-x-1/2">
+        <svg
+          aria-hidden="true"
+          className="h-full w-full opacity-45"
+          focusable="false"
+          preserveAspectRatio="none"
+          viewBox="0 0 1200 760"
+        >
+          {visualMeta.map((item, idx) => (
+            <motion.path
+              key={item.path}
+              animate={{
+                opacity: idx === active ? 0.98 : 0.1,
+                strokeWidth: idx === active ? 1.9 : 1.3,
+              }}
+              d={item.path}
+              fill="none"
+              initial={false}
+              stroke={item.color}
+              strokeLinecap="round"
+              strokeWidth="1.45"
+              transition={{ duration: 0.25 }}
+            />
+          ))}
           <motion.path
-            key={item.path}
-            animate={{
-              opacity: idx === active ? 0.98 : 0.1,
-              strokeWidth: idx === active ? 1.9 : 1.3,
-            }}
-            d={item.path}
+            animate={
+              reducedMotion
+                ? undefined
+                : {
+                    strokeDashoffset: [0, -2200],
+                  }
+            }
+            d={activeMeta.path}
             fill="none"
-            initial={false}
-            stroke={item.color}
+            stroke={activeMeta.color}
+            strokeDasharray="220 2000"
             strokeLinecap="round"
-            strokeWidth="1.45"
-            transition={{ duration: 0.25 }}
+            strokeOpacity="0.86"
+            strokeWidth="2.8"
+            transition={
+              reducedMotion
+                ? undefined
+                : {
+                    duration: 3.4,
+                    ease: "linear",
+                    repeat: Number.POSITIVE_INFINITY,
+                  }
+            }
           />
-        ))}
-        <motion.path
-          animate={
-            reducedMotion
-              ? undefined
-              : {
-                  strokeDashoffset: [0, -2200],
-                }
-          }
-          d={activeMeta.path}
-          fill="none"
-          stroke={activeMeta.color}
-          strokeDasharray="220 2000"
-          strokeLinecap="round"
-          strokeOpacity="0.86"
-          strokeWidth="2.8"
-          transition={
-            reducedMotion
-              ? undefined
-              : {
-                  duration: 3.4,
-                  ease: "linear",
-                  repeat: Number.POSITIVE_INFINITY,
-                }
-          }
-        />
-      </svg>
+        </svg>
+      </div>
 
       <motion.svg
         aria-hidden="true"
@@ -321,27 +325,29 @@ function ServicesView({
           transition={{ duration: 0.4 }}
         />
       </motion.svg>
-      <motion.svg
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-55"
-        focusable="false"
-        preserveAspectRatio="none"
-        style={reducedMotion ? undefined : { y: waveY }}
-        viewBox="0 0 1200 760"
-      >
-        <path
-          d="M60 610 C 220 540, 420 700, 620 610 C 800 530, 980 680, 1140 600"
-          fill="none"
-          stroke="rgba(255,149,0,0.34)"
-          strokeWidth="1.5"
-        />
-        <path
-          d="M70 150 C 230 230, 430 90, 640 170 C 840 250, 990 120, 1130 180"
-          fill="none"
-          stroke="rgba(217,225,32,0.34)"
-          strokeWidth="1.5"
-        />
-      </motion.svg>
+      <div className="pointer-events-none absolute inset-y-0 left-1/2 h-full w-screen -translate-x-1/2">
+        <motion.svg
+          aria-hidden="true"
+          className="h-full w-full opacity-55"
+          focusable="false"
+          preserveAspectRatio="none"
+          style={reducedMotion ? undefined : { y: waveY }}
+          viewBox="0 0 1200 760"
+        >
+          <path
+            d="M60 610 C 220 540, 420 700, 620 610 C 800 530, 980 680, 1140 600"
+            fill="none"
+            stroke="rgba(255,149,0,0.34)"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M70 150 C 230 230, 430 90, 640 170 C 840 250, 990 120, 1130 180"
+            fill="none"
+            stroke="rgba(217,225,32,0.34)"
+            strokeWidth="1.5"
+          />
+        </motion.svg>
+      </div>
 
       {[0, 1, 2, 3, 4, 5].map((idx) => (
         <motion.span
@@ -707,7 +713,41 @@ function VisionView({
         className="grid min-h-0 flex-1 gap-6 md:grid-cols-[1fr_320px] md:items-end"
         style={{ opacity: compOpacity }}
       >
-        <div className="relative min-h-0 h-full overflow-visible rounded-[1.8rem] border border-white/12 bg-black/24">
+        <div className="grid gap-3 md:hidden">
+          {section.beats.map((beat, idx) => {
+            const Icon = meta[idx].icon;
+            const isActive = idx === active;
+            return (
+              <div
+                key={`mobile-${beat.title}`}
+                className="rounded-2xl border px-4 py-3"
+                style={{
+                  background: isActive ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)",
+                  borderColor: isActive ? `${meta[idx].color}99` : "rgba(255,255,255,0.16)",
+                  boxShadow: isActive ? `0 0 20px ${meta[idx].glow}` : undefined,
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Icon
+                    className="h-4 w-4"
+                    style={{ color: isActive ? meta[idx].color : "#c0c0c7" }}
+                  />
+                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/70">
+                    Modulo 0{idx + 1}
+                  </p>
+                </div>
+                <p
+                  className="mt-2 text-sm font-semibold"
+                  style={{ color: isActive ? meta[idx].color : "#f4f4f5" }}
+                >
+                  {beat.title}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="relative min-h-0 h-full overflow-visible rounded-[1.8rem] border border-white/12 bg-black/24 hidden md:block">
           <motion.svg
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 h-full w-full opacity-50"
@@ -886,6 +926,271 @@ function VisionPanel({
   );
 }
 
+// ─── Beat 0 — Profundidad antes de ejecutar ───────────────────────────────
+function DepthVisual({ progress }: { progress: MotionValue<number> }) {
+  const reducedMotion = useReducedMotion();
+  const strataY = useTransform(progress, [0, 1], [-20, 38]);
+  const probeY = useTransform(progress, [0, 1], [14, -28]);
+  const glowY = useTransform(progress, [0, 1], [6, -14]);
+
+  const strata = [
+    { y: 76, h: 40, label: "01" },
+    { y: 128, h: 44, label: "02" },
+    { y: 184, h: 52, label: "03" }, // active / deepest
+    { y: 248, h: 44, label: "04" },
+    { y: 304, h: 40, label: "05" },
+  ] as const;
+  const probeX = 172;
+  const activeIdx = 2;
+  const intersections = strata.map((s) => ({ x: probeX, y: s.y + s.h / 2 }));
+
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* Layer 1 — Strata horizontal bands */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: strataY }}
+        viewBox="0 0 400 480"
+      >
+        {/* Artboard frame */}
+        <rect
+          fill="none"
+          height={296}
+          rx="2"
+          stroke="rgba(0,212,255,0.28)"
+          strokeWidth="0.7"
+          width={296}
+          x={52}
+          y={60}
+        />
+        {/* Corner marks */}
+        <path
+          d="M66 60 L52 60 L52 74"
+          fill="none"
+          stroke="rgba(0,212,255,0.7)"
+          strokeWidth="1.4"
+        />
+        <path
+          d="M334 60 L348 60 L348 74"
+          fill="none"
+          stroke="rgba(0,212,255,0.7)"
+          strokeWidth="1.4"
+        />
+        <path
+          d="M66 356 L52 356 L52 342"
+          fill="none"
+          stroke="rgba(0,212,255,0.7)"
+          strokeWidth="1.4"
+        />
+        <path
+          d="M334 356 L348 356 L348 342"
+          fill="none"
+          stroke="rgba(0,212,255,0.7)"
+          strokeWidth="1.4"
+        />
+        {strata.map((s, i) => (
+          <g key={s.label}>
+            <rect
+              fill={`rgba(0,212,255,${i === activeIdx ? 0.14 : 0.05})`}
+              height={s.h}
+              rx="1"
+              stroke={
+                i === activeIdx
+                  ? "rgba(0,212,255,0.48)"
+                  : "rgba(0,212,255,0.14)"
+              }
+              strokeWidth={i === activeIdx ? 0.85 : 0.5}
+              width={268}
+              x={66}
+              y={s.y}
+            />
+            {/* Layer index label */}
+            <text
+              fill={
+                i === activeIdx
+                  ? "rgba(0,212,255,0.62)"
+                  : "rgba(255,255,255,0.2)"
+              }
+              fontFamily="monospace"
+              fontSize="7"
+              textAnchor="end"
+              x={59}
+              y={s.y + s.h / 2 + 2.5}
+            >
+              {s.label}
+            </text>
+          </g>
+        ))}
+        {/* Depth scale — right edge */}
+        <line
+          stroke="rgba(0,212,255,0.22)"
+          strokeWidth="0.6"
+          x1={348}
+          x2={348}
+          y1={76}
+          y2={344}
+        />
+        {strata.map((s) => (
+          <line
+            key={`tick-${s.y}`}
+            stroke="rgba(0,212,255,0.22)"
+            strokeWidth="0.6"
+            x1={344}
+            x2={352}
+            y1={s.y + s.h / 2}
+            y2={s.y + s.h / 2}
+          />
+        ))}
+      </motion.svg>
+
+      {/* Layer 2 — Probe vertical scanner */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: probeY }}
+        viewBox="0 0 400 480"
+      >
+        {/* Static probe axis */}
+        <line
+          stroke="rgba(0,212,255,0.38)"
+          strokeWidth="0.85"
+          x1={probeX}
+          x2={probeX}
+          y1={60}
+          y2={360}
+        />
+        {/* Animated scan sweep */}
+        <motion.line
+          animate={
+            reducedMotion ? undefined : { strokeDashoffset: [0, -640] }
+          }
+          stroke="rgba(0,212,255,0.88)"
+          strokeDasharray="36 604"
+          strokeLinecap="round"
+          strokeWidth="1.6"
+          transition={{
+            duration: 3.4,
+            ease: "linear",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+          x1={probeX}
+          x2={probeX}
+          y1={60}
+          y2={360}
+        />
+        {/* Intersection nodes */}
+        {intersections.map((pt, i) => (
+          <g key={`node-${i}`}>
+            <circle
+              cx={pt.x}
+              cy={pt.y}
+              fill={
+                i === activeIdx
+                  ? "rgba(0,212,255,1)"
+                  : "rgba(0,212,255,0.38)"
+              }
+              r={i === activeIdx ? 3.5 : 2}
+            />
+            {i !== activeIdx && (
+              <circle
+                cx={pt.x}
+                cy={pt.y}
+                fill="none"
+                r="5.5"
+                stroke="rgba(0,212,255,0.22)"
+                strokeWidth="0.6"
+              />
+            )}
+          </g>
+        ))}
+      </motion.svg>
+
+      {/* Layer 3 — Active layer glow + read annotation */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: glowY }}
+        viewBox="0 0 400 480"
+      >
+        <defs>
+          <radialGradient cx="50%" cy="50%" id="depth-node-glow" r="50%">
+            <stop offset="0%" stopColor="rgba(0,212,255,0.52)" />
+            <stop offset="100%" stopColor="rgba(0,212,255,0)" />
+          </radialGradient>
+        </defs>
+        {/* Glow halo at active intersection */}
+        <motion.circle
+          animate={
+            reducedMotion
+              ? undefined
+              : { opacity: [0.4, 0.85, 0.4], r: [16, 25, 16] }
+          }
+          cx={probeX}
+          cy={intersections[activeIdx].y}
+          fill="url(#depth-node-glow)"
+          r={16}
+          transition={{
+            duration: 2.6,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+        />
+        {/* Pulse outer ring */}
+        <motion.circle
+          animate={
+            reducedMotion
+              ? undefined
+              : { opacity: [0.55, 0.1, 0.55], r: [10, 20, 10] }
+          }
+          cx={probeX}
+          cy={intersections[activeIdx].y}
+          fill="none"
+          r={10}
+          stroke="rgba(0,212,255,0.5)"
+          strokeWidth="0.75"
+          transition={{
+            duration: 2.6,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+        />
+        {/* Horizontal read line */}
+        <line
+          stroke="rgba(0,212,255,0.32)"
+          strokeDasharray="6 8"
+          strokeWidth="0.75"
+          x1={probeX + 6}
+          x2={326}
+          y1={intersections[activeIdx].y}
+          y2={intersections[activeIdx].y}
+        />
+        <text
+          fill="rgba(0,212,255,0.48)"
+          fontFamily="monospace"
+          fontSize="7"
+          textAnchor="start"
+          x={probeX + 10}
+          y={intersections[activeIdx].y - 7}
+        >
+          lectura activa
+        </text>
+      </motion.svg>
+
+      <div className="absolute bottom-3 right-4 font-mono text-[8px] uppercase tracking-[0.22em] text-[rgba(0,212,255,0.35)]">
+        capas · contexto · profundidad
+      </div>
+    </div>
+  );
+}
+
+// ─── Beat 1 — Diseño con intención ────────────────────────────────────────
 function DesignIntentionVisual({ progress }: { progress: MotionValue<number> }) {
   const reducedMotion = useReducedMotion();
   const gridY = useTransform(progress, [0, 1], [-24, 44]);
@@ -1229,6 +1534,481 @@ function DesignIntentionVisual({ progress }: { progress: MotionValue<number> }) 
   );
 }
 
+// ─── Beat 2 — Construcción con método ────────────────────────────────────
+function MethodVisual({ progress }: { progress: MotionValue<number> }) {
+  const reducedMotion = useReducedMotion();
+  const treeY = useTransform(progress, [0, 1], [20, -40]);
+  const leavesY = useTransform(progress, [0, 1], [-16, 32]);
+  const stepsY2 = useTransform(progress, [0, 1], [10, -20]);
+
+  // Component tree geometry
+  const root = { x: 160, y: 64, w: 80, h: 28 };
+  const mid = [
+    { x: 72, y: 152, w: 96, h: 28, label: "M01" },
+    { x: 232, y: 152, w: 96, h: 28, label: "M02" },
+  ];
+  const leaves = [
+    { x: 40, y: 240, w: 76, h: 24, label: "M01·A" },
+    { x: 128, y: 240, w: 76, h: 24, label: "M01·B" },
+    { x: 208, y: 240, w: 76, h: 24, label: "M02·A" },
+    { x: 284, y: 240, w: 76, h: 24, label: "M02·B" },
+  ];
+
+  const rootCx = root.x + root.w / 2; // 200
+  const rootCy = root.y + root.h; // 92
+  const midBottoms = mid.map((m) => ({ x: m.x + m.w / 2, y: m.y + m.h }));
+  const leafTops = leaves.map((l) => ({ x: l.x + l.w / 2, y: l.y }));
+
+  const treeConnections = [
+    { from: midBottoms[0], to: leafTops[0] },
+    { from: midBottoms[0], to: leafTops[1] },
+    { from: midBottoms[1], to: leafTops[2] },
+    { from: midBottoms[1], to: leafTops[3] },
+  ];
+
+  const steps = [
+    { x: 80, label: "01" },
+    { x: 160, label: "02" },
+    { x: 240, label: "03" },
+    { x: 320, label: "04" },
+  ];
+  const stepsLineY = 330;
+
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* Layer 1 — Root + mid-level blocks */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: treeY }}
+        viewBox="0 0 400 480"
+      >
+        {/* Root → mid connections */}
+        {mid.map((m, i) => {
+          const mcx = m.x + m.w / 2;
+          return (
+            <path
+              key={`root-mid-${i}`}
+              d={`M${rootCx},${rootCy} C${rootCx},${rootCy + 26} ${mcx},${m.y - 26} ${mcx},${m.y}`}
+              fill="none"
+              stroke="rgba(132,204,22,0.42)"
+              strokeWidth="0.85"
+            />
+          );
+        })}
+        {/* Root block */}
+        <rect
+          fill="rgba(132,204,22,0.1)"
+          height={root.h}
+          rx="2"
+          stroke="rgba(132,204,22,0.68)"
+          strokeWidth="1"
+          width={root.w}
+          x={root.x}
+          y={root.y}
+        />
+        <text
+          fill="rgba(132,204,22,0.72)"
+          fontFamily="monospace"
+          fontSize="7"
+          textAnchor="middle"
+          x={root.x + root.w / 2}
+          y={root.y + root.h / 2 + 2.5}
+        >
+          CORE
+        </text>
+        {/* Root glow */}
+        <motion.circle
+          animate={
+            reducedMotion
+              ? undefined
+              : { opacity: [0.2, 0.55, 0.2], r: [18, 26, 18] }
+          }
+          cx={rootCx}
+          cy={root.y + root.h / 2}
+          fill="rgba(132,204,22,0.22)"
+          r={18}
+          transition={{
+            duration: 2.8,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+        />
+        {/* Mid-level blocks */}
+        {mid.map((m) => (
+          <g key={m.label}>
+            <rect
+              fill="rgba(132,204,22,0.07)"
+              height={m.h}
+              rx="2"
+              stroke="rgba(132,204,22,0.44)"
+              strokeWidth="0.75"
+              width={m.w}
+              x={m.x}
+              y={m.y}
+            />
+            <text
+              fill="rgba(132,204,22,0.55)"
+              fontFamily="monospace"
+              fontSize="7"
+              textAnchor="middle"
+              x={m.x + m.w / 2}
+              y={m.y + m.h / 2 + 2.5}
+            >
+              {m.label}
+            </text>
+          </g>
+        ))}
+      </motion.svg>
+
+      {/* Layer 2 — Leaf nodes */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: leavesY }}
+        viewBox="0 0 400 480"
+      >
+        {/* Mid → leaf connections */}
+        {treeConnections.map((conn, i) => (
+          <path
+            key={`leaf-conn-${i}`}
+            d={`M${conn.from.x},${conn.from.y} C${conn.from.x},${conn.from.y + 24} ${conn.to.x},${conn.to.y - 24} ${conn.to.x},${conn.to.y}`}
+            fill="none"
+            stroke="rgba(132,204,22,0.26)"
+            strokeWidth="0.65"
+          />
+        ))}
+        {/* Leaf blocks */}
+        {leaves.map((l) => (
+          <g key={l.label}>
+            <rect
+              fill="rgba(132,204,22,0.04)"
+              height={l.h}
+              rx="2"
+              stroke="rgba(132,204,22,0.28)"
+              strokeWidth="0.6"
+              width={l.w}
+              x={l.x}
+              y={l.y}
+            />
+            <text
+              fill="rgba(132,204,22,0.38)"
+              fontFamily="monospace"
+              fontSize="6"
+              textAnchor="middle"
+              x={l.x + l.w / 2}
+              y={l.y + l.h / 2 + 2}
+            >
+              {l.label}
+            </text>
+          </g>
+        ))}
+      </motion.svg>
+
+      {/* Layer 3 — Step sequence rail */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: stepsY2 }}
+        viewBox="0 0 400 480"
+      >
+        {/* Timeline rail */}
+        <line
+          stroke="rgba(132,204,22,0.28)"
+          strokeWidth="0.75"
+          x1={56}
+          x2={344}
+          y1={stepsLineY}
+          y2={stepsLineY}
+        />
+        {steps.map((s, i) => (
+          <g key={s.label}>
+            <motion.circle
+              animate={
+                reducedMotion
+                  ? undefined
+                  : { opacity: [0.4, 0.92, 0.4] }
+              }
+              cx={s.x}
+              cy={stepsLineY}
+              fill={i < 3 ? "rgba(132,204,22,0.82)" : "rgba(132,204,22,0.28)"}
+              r="4"
+              transition={{
+                delay: i * 0.28,
+                duration: 1.8,
+                repeat: Number.POSITIVE_INFINITY,
+              }}
+            />
+            <text
+              fill="rgba(132,204,22,0.42)"
+              fontFamily="monospace"
+              fontSize="7"
+              textAnchor="middle"
+              x={s.x}
+              y={stepsLineY + 14}
+            >
+              {s.label}
+            </text>
+          </g>
+        ))}
+      </motion.svg>
+
+      <div className="absolute bottom-3 right-4 font-mono text-[8px] uppercase tracking-[0.22em] text-[rgba(132,204,22,0.38)]">
+        módulos · arquitectura · método
+      </div>
+    </div>
+  );
+}
+
+// ─── Beat 3 — Refinamiento continuo ──────────────────────────────────────
+function RefinementVisual({ progress }: { progress: MotionValue<number> }) {
+  const reducedMotion = useReducedMotion();
+  const outerY = useTransform(progress, [0, 1], [28, -44]);
+  const innerY = useTransform(progress, [0, 1], [-18, 32]);
+  const coreY = useTransform(progress, [0, 1], [8, -16]);
+
+  const cx = 200;
+  const cy = 224;
+
+  // Concentric ellipses — outermost = roughest, innermost = most refined
+  const ellipses = [
+    { rx: 150, ry: 86, opacity: 0.14, dash: "14 18", label: "iter 01" },
+    { rx: 104, ry: 60, opacity: 0.28, dash: "10 14", label: "iter 02" },
+    { rx: 66, ry: 38, opacity: 0.5, dash: "8 10", label: "iter 03" },
+    { rx: 36, ry: 21, opacity: 0.82, dash: undefined, label: "iter 04" },
+  ] as const;
+
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* Layer 1 — Outer ellipses (roughest iterations) */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: outerY }}
+        viewBox="0 0 400 480"
+      >
+        {ellipses.slice(0, 2).map((e, i) => (
+          <g key={`outer-${i}`}>
+            <ellipse
+              cx={cx}
+              cy={cy}
+              fill="none"
+              rx={e.rx}
+              ry={e.ry}
+              stroke={`rgba(255,0,144,${e.opacity})`}
+              strokeDasharray={e.dash}
+              strokeWidth="0.9"
+            />
+            {/* Direction arrow at rightmost point */}
+            <path
+              d={`M${cx + e.rx - 9},${cy - 5} L${cx + e.rx},${cy} L${cx + e.rx - 9},${cy + 5}`}
+              fill="none"
+              stroke={`rgba(255,0,144,${e.opacity * 1.5})`}
+              strokeWidth="0.75"
+            />
+            {/* Iteration label above ellipse */}
+            <text
+              fill={`rgba(255,0,144,${e.opacity * 1.2})`}
+              fontFamily="monospace"
+              fontSize="7"
+              textAnchor="middle"
+              x={cx}
+              y={cy - e.ry - 6}
+            >
+              {e.label}
+            </text>
+          </g>
+        ))}
+      </motion.svg>
+
+      {/* Layer 2 — Inner ellipses (refined iterations) */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: innerY }}
+        viewBox="0 0 400 480"
+      >
+        {ellipses.slice(2).map((e, i) => (
+          <g key={`inner-${i}`}>
+            <ellipse
+              cx={cx}
+              cy={cy}
+              fill="none"
+              rx={e.rx}
+              ry={e.ry}
+              stroke={`rgba(255,0,144,${e.opacity})`}
+              strokeDasharray={e.dash}
+              strokeWidth={e.dash === undefined ? "1.2" : "0.9"}
+            />
+            <path
+              d={`M${cx + e.rx - 8},${cy - 4} L${cx + e.rx},${cy} L${cx + e.rx - 8},${cy + 4}`}
+              fill="none"
+              stroke={`rgba(255,0,144,${e.opacity})`}
+              strokeWidth="0.85"
+            />
+            <text
+              fill={`rgba(255,0,144,${e.opacity * 0.85})`}
+              fontFamily="monospace"
+              fontSize="7"
+              textAnchor="middle"
+              x={cx}
+              y={cy - e.ry - 6}
+            >
+              {e.label}
+            </text>
+          </g>
+        ))}
+        {/* Horizontal convergence guides */}
+        <line
+          stroke="rgba(255,0,144,0.18)"
+          strokeDasharray="5 9"
+          strokeWidth="0.6"
+          x1={cx - 150}
+          x2={cx - 36}
+          y1={cy}
+          y2={cy}
+        />
+        <line
+          stroke="rgba(255,0,144,0.18)"
+          strokeDasharray="5 9"
+          strokeWidth="0.6"
+          x1={cx + 36}
+          x2={cx + 150}
+          y1={cy}
+          y2={cy}
+        />
+      </motion.svg>
+
+      {/* Layer 3 — Core focal point */}
+      <motion.svg
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        style={reducedMotion ? undefined : { y: coreY }}
+        viewBox="0 0 400 480"
+      >
+        <defs>
+          <radialGradient cx="50%" cy="50%" id="refine-core-glow" r="50%">
+            <stop offset="0%" stopColor="rgba(255,0,144,0.58)" />
+            <stop offset="100%" stopColor="rgba(255,0,144,0)" />
+          </radialGradient>
+        </defs>
+        {/* Glow halo */}
+        <motion.circle
+          animate={
+            reducedMotion
+              ? undefined
+              : { opacity: [0.4, 0.85, 0.4], r: [14, 22, 14] }
+          }
+          cx={cx}
+          cy={cy}
+          fill="url(#refine-core-glow)"
+          r={14}
+          transition={{
+            duration: 2.6,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+        />
+        {/* Inner ring */}
+        <circle
+          cx={cx}
+          cy={cy}
+          fill="none"
+          r="7"
+          stroke="rgba(255,0,144,0.72)"
+          strokeWidth="0.75"
+        />
+        {/* Core dot */}
+        <circle cx={cx} cy={cy} fill="rgba(255,0,144,1)" r="3" />
+        {/* Pulse ring */}
+        <motion.circle
+          animate={
+            reducedMotion
+              ? undefined
+              : { opacity: [0.6, 0.1, 0.6], r: [12, 26, 12] }
+          }
+          cx={cx}
+          cy={cy}
+          fill="none"
+          r={12}
+          stroke="rgba(255,0,144,0.48)"
+          strokeWidth="0.7"
+          transition={{
+            duration: 2.6,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+          }}
+        />
+        {/* Δ label */}
+        <text
+          fill="rgba(255,0,144,0.44)"
+          fontFamily="monospace"
+          fontSize="8"
+          textAnchor="start"
+          x={cx + 10}
+          y={cy - 10}
+        >
+          Δ
+        </text>
+        {/* Signal → precision annotation */}
+        <path
+          d="M72 388 C 102 376, 136 372, 168 370 C 196 368, 216 366, 240 364"
+          fill="none"
+          stroke="rgba(255,0,144,0.28)"
+          strokeLinecap="round"
+          strokeWidth="1"
+        />
+        <path
+          d="M236 360 L241 364 L236 368"
+          fill="none"
+          stroke="rgba(255,0,144,0.28)"
+          strokeWidth="1"
+        />
+        <text
+          fill="rgba(255,0,144,0.32)"
+          fontFamily="monospace"
+          fontSize="7"
+          textAnchor="start"
+          x="72"
+          y="402"
+        >
+          señal → precisión
+        </text>
+      </motion.svg>
+
+      <div className="absolute bottom-3 right-4 font-mono text-[8px] uppercase tracking-[0.22em] text-[rgba(255,0,144,0.35)]">
+        iteración · evidencia · convergencia
+      </div>
+    </div>
+  );
+}
+
+// ─── Dispatcher — selecciona visual por beat index ────────────────────────
+function StudioSideVisual({
+  active,
+  progress,
+}: {
+  active: number;
+  progress: MotionValue<number>;
+}) {
+  if (active === 0) return <DepthVisual progress={progress} />;
+  if (active === 1) return <DesignIntentionVisual progress={progress} />;
+  if (active === 2) return <MethodVisual progress={progress} />;
+  return <RefinementVisual progress={progress} />;
+}
+
 function StudioView({
   section,
   active,
@@ -1240,9 +2020,16 @@ function StudioView({
   direction: 1 | -1;
   progress: MotionValue<number>;
 }) {
-  const openerOpacity = useTransform(progress, [0, 0.18, 0.3], [1, 1, 0]);
-  const openerY = useTransform(progress, [0, 0.34], [0, -40]);
-  const compOpacity = useTransform(progress, [0.18, 0.36], [0, 1]);
+  const reducedMotion = useReducedMotion();
+  // Opener exits quickly so beat 0 content has time to be fully visible
+  // Beat 0 is active during progress ≈ 0.08–0.22; content must reach opacity 1
+  // before that window closes.
+  const openerOpacity = useTransform(progress, [0, 0.05, 0.12], [1, 1, 0]);
+  const openerY = useTransform(progress, [0, 0.18], [0, -40]);
+  const compOpacity = useTransform(progress, [0.04, 0.15], [0, 1]);
+  const brandScale = useTransform(progress, [0, 0.12], [1, 1.08]);
+  const brandGlow = useTransform(progress, [0, 0.08, 0.14], [0.22, 0.5, 0.26]);
+  const brandStripeX = useTransform(progress, [0, 0.12], [-40, 34]);
   const studioLooks = [
     {
       accent: "#00D4FF",
@@ -1278,6 +2065,8 @@ function StudioView({
     },
   ] as const;
   const activeLook = studioLooks[active % studioLooks.length];
+  const beatIcons = [ScanLine, Crosshair, Blocks, RefreshCw] as const;
+  const BeatIcon = beatIcons[Math.min(active, beatIcons.length - 1)];
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
@@ -1285,16 +2074,26 @@ function StudioView({
         className="pointer-events-none absolute inset-0 z-20 flex items-center"
         style={{ opacity: openerOpacity, y: openerY }}
       >
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
-            {section.eyebrow}
-          </p>
-          <h2 className="hero-glow mt-5 max-w-4xl text-display text-[clamp(2.1rem,3.2vw+0.8rem,3.9rem)] font-bold leading-[1.06]">
-            {section.title}
-          </h2>
-          <p className="mt-4 max-w-4xl text-base leading-7 text-[var(--color-text-secondary)]">
-            {section.lead}
-          </p>
+        <div className="w-full">
+          <motion.div
+            className="relative max-w-4xl"
+            style={reducedMotion ? undefined : { scale: brandScale }}
+          >
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute -left-5 top-0 h-16 w-16 rounded-full bg-[var(--color-accent-cyan)]/20 blur-2xl"
+              style={reducedMotion ? undefined : { opacity: brandGlow, x: brandStripeX }}
+            />
+            <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
+              {section.eyebrow} · BHRK Codelabs
+            </p>
+            <h2 className="hero-glow mt-5 text-display text-[clamp(2.1rem,3.2vw+0.8rem,3.9rem)] font-bold leading-[1.06]">
+              {section.title}
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
+              {section.lead}
+            </p>
+          </motion.div>
         </div>
       </motion.div>
 
@@ -1337,80 +2136,30 @@ function StudioView({
             initial={{ opacity: 0, y: direction > 0 ? 90 : -90 }}
             transition={{ duration: 0.27, ease: "easeOut" }}
           >
-            {active === 1 ? (
-              /* ── Diseño con intención — layout izquierda/derecha ── */
-              <div className="grid h-full md:grid-cols-[1fr_1fr]">
-                <div className="flex items-center px-6 md:px-10">
-                  <div className="max-w-lg">
-                    <div className="mb-4 flex items-center gap-2.5">
-                      <Crosshair
-                        className="h-3.5 w-3.5 shrink-0"
-                        style={{ color: activeLook.accent }}
-                      />
-                      <p
-                        className="font-mono text-xs uppercase tracking-[0.22em]"
-                        style={{ color: activeLook.accent }}
-                      >
-                        Estudio en accion · {`0${active + 1}`} /{" "}
-                        {`0${section.beats.length}`}
-                      </p>
-                    </div>
-                    <p className="text-[clamp(1.9rem,3.4vw+0.4rem,3.8rem)] font-semibold leading-[0.94] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
-                      {section.beats[active]?.title}
+            {/* Layout split izquierda / derecha — todos los beats */}
+            <div className="grid h-full md:grid-cols-[1fr_1fr]">
+              <div className="flex items-center px-6 md:px-10">
+                <div className="max-w-lg">
+                  <div className="mb-4 flex items-center gap-2.5">
+                    <BeatIcon
+                      className="h-3.5 w-3.5 shrink-0"
+                      style={{ color: activeLook.accent }}
+                    />
+                    <p
+                      className="font-mono text-xs uppercase tracking-[0.22em]"
+                      style={{ color: activeLook.accent }}
+                    >
+                      Estudio en accion · {`0${active + 1}`} /{" "}
+                      {`0${section.beats.length}`}
                     </p>
-                    <p className="mt-5 text-base leading-8 text-white/90 md:text-lg">
-                      {activeLook.detail}
-                    </p>
-                    <p className="mt-3 text-sm font-medium text-white/80 md:text-base">
-                      {activeLook.helper}
-                    </p>
-                    <div className="mt-7 flex flex-wrap gap-2.5">
-                      {section.beats.map((beat, idx) => (
-                        <span
-                          key={beat.title}
-                          className={`rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition md:text-xs ${
-                            idx === active
-                              ? "bg-white/14 text-white"
-                              : "border-white/20 text-white/55"
-                          }`}
-                          style={
-                            idx === active
-                              ? {
-                                  borderColor: activeLook.accent,
-                                  boxShadow: `0 0 14px ${activeLook.accent}66`,
-                                }
-                              : undefined
-                          }
-                        >
-                          {beat.title}
-                        </span>
-                      ))}
-                    </div>
                   </div>
-                </div>
-                {/* Visual hero — blueprint abstracto */}
-                <div className="relative hidden overflow-hidden md:block">
-                  <DesignIntentionVisual progress={progress} />
-                </div>
-              </div>
-            ) : (
-              /* ── Otros beats — layout full-bleed ── */
-              <div className="absolute inset-0 flex items-center px-6 md:px-10">
-                <div className="max-w-4xl">
-                  <p
-                    className="font-mono text-xs uppercase tracking-[0.22em]"
-                    style={{ color: activeLook.accent }}
-                  >
-                    Estudio en accion · {`0${active + 1}`} /{" "}
-                    {`0${section.beats.length}`}
-                  </p>
-                  <p className="mt-4 text-[clamp(2rem,3.8vw+0.5rem,4.2rem)] font-semibold leading-[0.92] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
+                  <p className="text-[clamp(1.9rem,3.4vw+0.4rem,3.8rem)] font-semibold leading-[0.94] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
                     {section.beats[active]?.title}
                   </p>
-                  <p className="mt-5 max-w-3xl text-base leading-8 text-white/90 md:text-lg">
+                  <p className="mt-5 text-base leading-8 text-white/90 md:text-lg">
                     {activeLook.detail}
                   </p>
-                  <p className="mt-3 max-w-3xl text-sm font-medium text-white/80 md:text-base">
+                  <p className="mt-3 text-sm font-medium text-white/80 md:text-base">
                     {activeLook.helper}
                   </p>
                   <div className="mt-7 flex flex-wrap gap-2.5">
@@ -1437,7 +2186,11 @@ function StudioView({
                   </div>
                 </div>
               </div>
-            )}
+              {/* Visual hero semántico por beat */}
+              <div className="relative hidden overflow-hidden md:block">
+                <StudioSideVisual active={active} progress={progress} />
+              </div>
+            </div>
           </motion.div>
         </AnimatePresence>
       </motion.div>
@@ -1503,6 +2256,67 @@ function StudioPanel({
 }
 
 function TrustView({ section }: { section: NarrativeSection }) {
+  const [contact, setContact] = useState("");
+  const [brief, setBrief] = useState("");
+  const [humanCheck, setHumanCheck] = useState("");
+  const [website, setWebsite] = useState("");
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const isHuman = humanCheck.trim().toUpperCase() === "BHRK";
+  const hasContact = contact.trim().length >= 6;
+
+  const contactPayload = useMemo(() => {
+    const trimmedContact = contact.trim();
+    const trimmedBrief = brief.trim();
+    return [
+      "Hola BHRK, quiero hablar de mi proyecto.",
+      "",
+      `Contacto: ${trimmedContact || "No indicado"}`,
+      `Necesidad: ${trimmedBrief || "Quiero orientación para el siguiente paso"}`,
+    ].join("\n");
+  }, [brief, contact]);
+
+  const whatsappHref = useMemo(
+    () => `https://wa.me/573024012969?text=${encodeURIComponent(contactPayload)}`,
+    [contactPayload],
+  );
+  const mailtoHref = useMemo(
+    () =>
+      `mailto:hola@bhrkcodelabs.com?subject=${encodeURIComponent("Consulta desde sitio web")}&body=${encodeURIComponent(contactPayload)}`,
+    [contactPayload],
+  );
+
+  const validateLead = () => {
+    if (website.trim().length > 0) {
+      setFeedback("No se pudo validar el envío. Intenta nuevamente.");
+      return false;
+    }
+    if (!hasContact) {
+      setFeedback("Déjanos un correo o número válido para responderte.");
+      return false;
+    }
+    if (!isHuman) {
+      setFeedback('Para continuar, escribe "BHRK" en la confirmación.');
+      return false;
+    }
+    setFeedback(null);
+    return true;
+  };
+
+  const handleWhatsApp = () => {
+    if (!validateLead()) {
+      return;
+    }
+    window.open(whatsappHref, "_blank", "noopener,noreferrer");
+  };
+
+  const handleEmail = () => {
+    if (!validateLead()) {
+      return;
+    }
+    window.location.href = mailtoHref;
+  };
+
   return (
     <div className="h-full">
       <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
@@ -1515,12 +2329,12 @@ function TrustView({ section }: { section: NarrativeSection }) {
         {section.lead}
       </p>
 
-      <div className="mt-8 grid gap-10 md:grid-cols-[1.15fr_0.85fr]">
+      <div className="mt-8 grid gap-10 md:grid-cols-[1.08fr_0.92fr]">
         <div className="space-y-3">
           {section.beats.map((beat, idx) => (
             <div
               key={beat.title}
-              className="grid border-b border-white/12 py-3 md:grid-cols-[220px_1fr] md:gap-6"
+              className="grid rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 md:grid-cols-[220px_1fr] md:gap-6"
             >
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
                 0{idx + 1} · {beat.title}
@@ -1532,36 +2346,74 @@ function TrustView({ section }: { section: NarrativeSection }) {
           ))}
         </div>
 
-        <div>
+        <div className="rounded-2xl border border-white/10 bg-[linear-gradient(162deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-5 md:p-6">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-lime)]">
             Contacto directo
           </p>
+          <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
+            Cuéntanos qué necesitas y te respondemos por WhatsApp o correo, como te quede mejor.
+          </p>
           <a
-            className="mt-3 inline-flex text-xl font-semibold text-[#ff4d4f] hover:text-[#ff7875]"
+            className="mt-4 inline-flex text-xl font-semibold text-[#ff4d4f] hover:text-[#ff7875]"
             href="tel:+573024012969"
           >
             +57 302 401 2969
           </a>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <a
-              className="inline-flex rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-[#07220f] transition hover:brightness-110"
-              href="https://wa.me/573024012969?text=Hola%20BHRK%2C%20quiero%20hablar%20de%20mi%20proyecto."
-              rel="noreferrer"
-              target="_blank"
-            >
-              WhatsApp
-            </a>
-            <a
-              className="inline-flex rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-accent-cyan)] hover:text-[var(--color-accent-cyan)]"
-              href="mailto:hola@bhrkcodelabs.com?subject=Quiero%20que%20me%20contacten&body=Nombre:%0ATeléfono:%0ACorreo:%0AContexto%20del%20proyecto:"
-            >
-              Dejar número o correo
-            </a>
+
+          <div className="mt-6 grid gap-3">
+            <input
+              className="w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
+              inputMode="email"
+              onChange={(event) => setContact(event.target.value)}
+              placeholder="Tu WhatsApp o correo"
+              value={contact}
+            />
+            <textarea
+              className="min-h-24 w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
+              onChange={(event) => setBrief(event.target.value)}
+              placeholder="¿Qué quieres resolver?"
+              value={brief}
+            />
+            <input
+              aria-hidden="true"
+              autoComplete="off"
+              className="hidden"
+              onChange={(event) => setWebsite(event.target.value)}
+              tabIndex={-1}
+              type="text"
+              value={website}
+            />
+            <input
+              className="w-full rounded-xl border border-white/16 bg-black/30 px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-cyan)]"
+              onChange={(event) => setHumanCheck(event.target.value)}
+              placeholder='Confirmación rápida: escribe "BHRK"'
+              value={humanCheck}
+            />
           </div>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              className="inline-flex rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-[#07220f] transition hover:brightness-110"
+              onClick={handleWhatsApp}
+              type="button"
+            >
+              Enviar por WhatsApp
+            </button>
+            <button
+              className="inline-flex rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-accent-cyan)] hover:text-[var(--color-accent-cyan)]"
+              onClick={handleEmail}
+              type="button"
+            >
+              Enviar por correo
+            </button>
+          </div>
+
           <p className="mt-4 text-xs leading-6 text-[var(--color-text-muted)]">
-            También puedes enviar tu correo o teléfono y te respondemos con
-            contexto técnico y siguiente paso claro.
+            Si prefieres, también puedes llamarnos directo sin llenar el formulario.
           </p>
+          {feedback ? (
+            <p className="mt-2 text-xs leading-6 text-[#ff8f8f]">{feedback}</p>
+          ) : null}
         </div>
       </div>
     </div>
