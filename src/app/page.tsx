@@ -18,8 +18,8 @@ const heroTickerItems = [
 const sectionSpyItems = [
   { id: "inicio", label: "Inicio" },
   { id: "servicios", label: "Servicios" },
-  { id: "metodo", label: "Metodo" },
-  { id: "vision-producto", label: "Vision" },
+  { id: "metodo", label: "Método" },
+  { id: "vision-producto", label: "Visión" },
   { id: "sobre-bhrk", label: "Estudio" },
   { id: "info-verificada", label: "Confianza" },
   { id: "contacto", label: "Contacto" },
@@ -252,7 +252,7 @@ export default function HomePage() {
           <BrandParallax />
           <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-10">
             <FadeIn>
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-[var(--color-accent-cyan)]">
+              <p className="typo-eyebrow tracking-[0.3em] text-[var(--color-accent-cyan)]">
                 ESTUDIO TÉCNICO-CREATIVO
               </p>
               <HeroSequence />
@@ -274,7 +274,7 @@ export default function HomePage() {
               </a>
             </FadeIn>
             <FadeIn delay={0.15}>
-              <p className="font-mono text-xs tracking-[0.18em] text-[var(--color-text-muted)]">
+              <p className="typo-eyebrow tracking-[0.18em] text-[var(--color-text-muted)]">
                 Software a medida · Automatización · Integraciones · Canales
                 conversacionales
               </p>
@@ -294,14 +294,14 @@ export default function HomePage() {
           <BrandParallax />
           <div className="relative z-10 mx-auto w-full max-w-6xl">
             <FadeIn>
-              <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
+              <p className="typo-eyebrow text-[var(--color-accent-cyan)]">
                 Contacto directo
               </p>
-              <h2 className="mt-4 text-display fs-d-md font-bold">
+              <h2 className="typo-title-block mt-4">
                 Tienes una idea o una operación que necesita{" "}
                 <span className="hero-glow inline-block">orden</span>.
               </h2>
-              <p className="mt-4 max-w-3xl text-[var(--color-text-secondary)]">
+              <p className="typo-body mt-4 max-w-3xl">
                 Hablemos y definimos un siguiente paso claro, con foco técnico y
                 tiempos realistas.
               </p>
@@ -329,13 +329,13 @@ export default function HomePage() {
       </main>
 
       <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg-base)] px-5 py-10">
-        <div className="mx-auto grid w-full max-w-6xl gap-8 text-sm text-[var(--color-text-secondary)] md:grid-cols-[1.2fr_1fr] md:items-end">
+        <div className="mx-auto grid w-full max-w-6xl gap-8 text-[var(--color-text-secondary)] md:grid-cols-[1.2fr_1fr] md:items-end">
           <div>
-            <p>
+            <p className="typo-body-sm">
               © {new Date().getFullYear()} BHRK Codelabs. Todos los derechos
               reservados.
             </p>
-            <div className="mt-4 space-y-1.5 text-xs leading-6 text-[var(--color-text-muted)] md:text-sm">
+            <div className="mt-4 space-y-1.5 text-sm leading-6 text-[var(--color-text-muted)]">
               <p>
                 <span className="text-[var(--color-text-secondary)]">
                   Dirección:

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function PoliticaDePrivacidadPage() {
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 text-[var(--color-text-primary)]">
-      <h1 className="text-display fs-d-md font-bold">
+      <h1 className="typo-title-section">
         Política de privacidad
       </h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">

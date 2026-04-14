@@ -15,7 +15,7 @@ const scenes = [
   {
     id: "scene-01",
     title: "Tu negocio no necesita mas ruido.",
-    accent: "Necesita direccion y ejecucion.",
+    accent: "Necesita dirección y ejecución.",
     align: "items-start text-left",
     gradient:
       "radial-gradient(ellipse at 30% 46%, rgba(56,240,255,0.55), transparent 54%), radial-gradient(ellipse at 64% 30%, rgba(27,39,255,0.5), transparent 52%), radial-gradient(ellipse at 74% 74%, rgba(255,0,144,0.4), transparent 50%), radial-gradient(ellipse at 98% 52%, rgba(255,149,0,0.34), transparent 44%), linear-gradient(180deg, rgba(8,10,18,0.86), rgba(8,10,18,0.94))",
@@ -187,7 +187,7 @@ export function IntroParallaxPhrase() {
                     : { duration: 1.05, ease: INTRO_CINEMATIC_EASE }
                 }
               >
-                <p className="mt-3 max-w-5xl text-display text-[clamp(1.65rem,3vw+0.8rem,3.9rem)] font-extrabold leading-[0.98] text-[var(--color-text-primary)]">
+                <p className="typo-title-section mt-3 max-w-5xl text-[var(--color-text-primary)]">
                   {scenes[activeIdx]?.title}
                 </p>
                 <p className="mt-4 max-w-3xl font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-text-secondary)]">

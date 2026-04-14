@@ -27,7 +27,7 @@
 
 /* ─────────────────────────────────────────────
    Escala tipográfica fluida — 5 pasos display
-   Uso: class="text-display fs-d-lg font-bold"
+   Uso: class="typo-title-section"
    ─────────────────────────────────────────────
    xl  → hero principal           (~45–90px)
    lg  → titular de sección       (~35–70px)
@@ -43,6 +43,11 @@
   --fs-d-md: clamp(1.75rem, 2.6vw + 0.5rem, 3.4rem);
   --fs-d-sm: clamp(1.35rem, 1.8vw + 0.4rem, 2.4rem);
   --fs-d-xs: clamp(1.05rem, 1.2vw + 0.3rem, 1.75rem);
+
+  --fs-body-lg: clamp(1rem, 0.16vw + 0.97rem, 1.125rem);
+  --fs-body-md: 1rem;
+  --fs-body-sm: 0.9375rem;
+  --fs-meta: 0.75rem;
 }
 
 /* ─────────────────────────────────────────────
@@ -52,11 +57,17 @@
   border-color: var(--color-border);
 }
 
+html {
+  font-size: 16px;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: var(--font-body), sans-serif;
-  font-size: 1rem;
-  line-height: 1.65;
+  font-size: var(--fs-body-md);
+  line-height: 1.6;
   background:
     radial-gradient(circle at 10% 0%,  rgb(0 212 255 / 0.16) 0%, transparent 32%),
     radial-gradient(circle at 96% 8%,  rgb(255 149 0 / 0.14)  0%, transparent 34%),
@@ -66,11 +77,28 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-body), sans-serif;
+}
+
+/* Evita zoom/ajustes extraños en iOS y Android en campos de formulario */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 
 /* ─────────────────────────────────────────────
@@ -82,6 +110,78 @@ a {
   font-family: var(--font-display), var(--font-body), sans-serif;
 }
 
+.typo-eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--fs-meta);
+  letter-spacing: 0.2em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.typo-title-hero {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  font-size: var(--fs-d-xl);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.typo-title-section {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  font-size: var(--fs-d-lg);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.typo-title-block {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  font-size: var(--fs-d-md);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.typo-body-lg {
+  font-size: var(--fs-body-lg);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.typo-body {
+  font-size: var(--fs-body-md);
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+.typo-body-sm {
+  font-size: var(--fs-body-sm);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.form-field {
+  width: 100%;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 0.75rem;
+  background: rgb(0 0 0 / 0.3);
+  padding: 0.625rem 0.75rem;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color 180ms ease;
+}
+
+.form-field::placeholder {
+  color: var(--color-text-muted);
+}
+
+.form-field:focus {
+  border-color: var(--color-accent-cyan);
+}
+
 /* Tamaños fluidos — combinar con .text-display */
 .fs-d-xl { font-size: var(--fs-d-xl); line-height: 0.95; }
 .fs-d-lg { font-size: var(--fs-d-lg); line-height: 1.0;  }
@@ -89,11 +189,12 @@ a {
 .fs-d-sm { font-size: var(--fs-d-sm); line-height: 1.14; }
 .fs-d-xs { font-size: var(--fs-d-xs); line-height: 1.22; }
 
-/* Títulos de servicio (animados) — Inter intencionalmente,
-   con tracking negativo y text-balance para grandes tamaños */
+/* Títulos de servicio (animados) — alineados al sistema display */
 .service-title {
-  font-family: var(--font-body), sans-serif;
-  letter-spacing: -0.018em;
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.04;
   text-wrap: balance;
   text-shadow:
     0 0 14px rgb(0 212 255 / 0.12),

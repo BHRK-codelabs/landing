@@ -219,7 +219,7 @@ function PitchBridgePanel({
               {section.eyebrow}
             </motion.p>
             <motion.h2
-              className="hero-glow mt-5 max-w-5xl text-display fs-d-lg font-bold"
+              className="hero-glow typo-title-section mt-5 max-w-5xl"
               style={
                 reducedMotion
                   ? undefined

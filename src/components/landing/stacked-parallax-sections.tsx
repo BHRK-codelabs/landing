@@ -171,7 +171,7 @@ function ServicesView({
       icon: Orbit,
       color: "#00D4FF",
       path: "M0 170 C 230 260, 430 110, 640 190 C 850 280, 980 150, 1200 230",
-      label: "Decision y direccion",
+      label: "Decisión y dirección",
     },
     {
       icon: Blocks,
@@ -209,8 +209,8 @@ function ServicesView({
     "Diagnostico y criterio antes de mover presupuesto.",
     "Arquitectura para crecer sin romper continuidad.",
     "Flujos conectados para operar con menos friccion.",
-    "Conversaciones utiles para soporte y operacion.",
-    "Capacidad tecnica que entra y suma desde el dia uno.",
+    "Conversaciones útiles para soporte y operación.",
+    "Capacidad técnica que entra y suma desde el día uno.",
     "Experiencias sobrias que se entienden y rinden.",
   ] as const;
 
@@ -438,7 +438,7 @@ function ServicesView({
                 {activeNarrative}
               </p>
               <p
-                className="service-title mt-5 max-w-5xl text-[clamp(2.2rem,4.8vw+0.3rem,5.3rem)] font-extrabold leading-[0.95]"
+                className="service-title typo-title-section mt-5 max-w-5xl"
                 style={{ color: activeMeta.color }}
               >
                 {section.beats[active]?.title}
@@ -551,7 +551,7 @@ function MethodView({
         <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
           {section.eyebrow}
         </p>
-        <h2 className="hero-glow mt-4 max-w-xl text-display fs-d-lg font-bold">
+        <h2 className="hero-glow typo-title-section mt-4 max-w-xl">
           {section.title}
         </h2>
         <p className="mt-4 max-w-xl text-[var(--color-text-secondary)]">
@@ -585,7 +585,7 @@ function MethodView({
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-accent-lime)]">
               Etapa {`0${active + 1}`}
             </p>
-            <p className="mt-3 fs-d-md font-semibold">
+            <p className="typo-title-block mt-3 font-semibold">
               {section.beats[active]?.title}
             </p>
             <p className="mt-5 max-w-xl text-base leading-[1.7] text-[var(--color-text-secondary)]">
@@ -773,7 +773,7 @@ function VisionView({
             🧪 En incubación
           </span>
         </div>
-        <h3 className="mt-3 max-w-3xl text-display text-[clamp(1.2rem,1.1vw+0.8rem,2.15rem)] font-bold leading-[1.08]">
+        <h3 className="typo-title-block mt-3 max-w-3xl">
           Estos son los productos que estamos trabajando y queremos que pronto los veas.
         </h3>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--color-text-secondary)]">
@@ -2169,7 +2169,7 @@ function StudioView({
                       {`0${section.beats.length}`}
                     </p>
                   </div>
-                  <p className="text-[clamp(1.9rem,3.4vw+0.4rem,3.8rem)] font-semibold leading-[0.94] text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
+                  <p className="typo-title-section text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.42)]">
                     {section.beats[active]?.title}
                   </p>
                   <p className="mt-5 text-base leading-[1.7] text-white/90 md:text-lg">
@@ -2351,7 +2351,7 @@ function TrustView({ section }: { section: NarrativeSection }) {
       <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
         {section.eyebrow}
       </p>
-      <h2 className="mt-4 max-w-4xl text-display text-[clamp(2.2rem,3vw+0.9rem,3.9rem)] font-bold leading-[1.05]">
+      <h2 className="typo-title-section mt-4 max-w-4xl">
         {section.title}
       </h2>
       <p className="mt-4 max-w-3xl text-[var(--color-text-secondary)]">
@@ -2455,7 +2455,7 @@ function LedgerView({ section }: { section: NarrativeSection }) {
       <p className="font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-accent-cyan)]">
         {section.eyebrow}
       </p>
-      <h2 className="hero-glow mt-5 max-w-4xl text-display text-[clamp(2.2rem,3.2vw+0.9rem,3.9rem)] font-bold leading-[1.06]">
+      <h2 className="hero-glow typo-title-section mt-5 max-w-4xl">
         {section.title}
       </h2>
       <p className="mt-5 max-w-3xl text-[var(--color-text-secondary)]">

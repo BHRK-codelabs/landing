@@ -127,7 +127,7 @@ export default function ProductDetailPage({
       <p className="font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-accent-cyan)]">
         Producto en desarrollo
       </p>
-      <h1 className="mt-4 text-display fs-d-md font-bold">{product.name}</h1>
+      <h1 className="mt-4 typo-title-section">{product.name}</h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">
         {product.summary}
       </p>

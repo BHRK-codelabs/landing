@@ -12,7 +12,7 @@ export default function MetodologiaPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 text-[var(--color-text-primary)]">
-      <h1 className="text-display fs-d-md font-bold">Metodología</h1>
+      <h1 className="typo-title-section">Metodología</h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">
         Trabajamos por etapas para evitar improvisación, reducir riesgo y
         sostener decisiones técnicas con contexto.

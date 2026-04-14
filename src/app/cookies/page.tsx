@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function CookiesPage() {
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 text-[var(--color-text-primary)]">
-      <h1 className="text-display fs-d-md font-bold">Política de cookies</h1>
+      <h1 className="typo-title-section">Política de cookies</h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">
         Este sitio puede usar cookies técnicas y analíticas para mejorar
         rendimiento, seguridad y experiencia de uso.

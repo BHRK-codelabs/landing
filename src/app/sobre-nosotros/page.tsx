@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function SobreNosotrosPage() {
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 text-[var(--color-text-primary)]">
-      <h1 className="text-display fs-d-md font-bold">Sobre nosotros</h1>
+      <h1 className="typo-title-section">Sobre nosotros</h1>
       <p className="mt-4 text-[var(--color-text-secondary)]">
         BHRK Codelabs es un estudio de consultoría tecnológica, desarrollo y
         experiencia digital. Combinamos criterio técnico y diseño para construir
